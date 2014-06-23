@@ -32,7 +32,7 @@ public class QueryMetadata {
     public String toString(){
         String res =    "QueryID: \t" + queryID + "\n" +
                         "Statement:\t"+ queryStatement + "\n" +
-                        "IsActiveted: \t" + queryID + "\n";
+                        "IsActiveted: \t" + queryIsActivated + "\n";
         return res;
     }
 }

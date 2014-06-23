@@ -61,9 +61,9 @@ public class App {
         // add select * from stream => ['add','add select * from stream']                
         String eplQuery = tokens[1]; //query that will be sent to Esper Engine
        
-        try{
-              //TODO antes de enviares a query tens de retirar o --> ;
-              QueryMetadata queryMetaData = esper.installQuery(eplQuery);
+        try{    
+              //remover ";" do final do statement da query 
+              QueryMetadata queryMetaData = esper.installQuery(eplQuery.replace(";",""));
               System.out.println("Query instalada com suesso\n"+queryMetaData);
         }catch(EPStatementSyntaxException e){
             System.out.println("Compilation Erro: "+e.getMessage());            
