@@ -4,6 +4,7 @@ import com.espertech.esper.client.EPRuntime;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
+import com.espertech.esper.client.EPStatementSyntaxException;
 
 /*
  * @author Diogo Anjos (diogo.silva.anjos@tecnico.ulisboa.pt)
@@ -34,12 +35,29 @@ public class EsperEngine {
         engineRuntime.sendEvent(event);
     }
 
-    private void installQuery(String eplQuery, String queryId){
+//    public void installQuery(String eplQuery, String queryId){
+//        query = engineAdmin.createEPL(eplQuery);
+//        QueryListener listener = new QueryListener(queryId);
+//        query.addListener(listener);
+//        countInitializedQueries++;        
+//    }
+    
+    public QueryMetadata installQuery(String eplQuery) throws EPStatementSyntaxException{
+        
+        //install query
         query = engineAdmin.createEPL(eplQuery);
-        QueryListener listener = new QueryListener(queryId);
-        query.addListener(listener);
+        System.out.println("ZZ");
+        
+        //get queryID
         countInitializedQueries++;        
+        
+        //create new listener
+        QueryListener listener = new QueryListener(countInitializedQueries);
+        query.addListener(listener);
+            
+        return new QueryMetadata(countInitializedQueries, eplQuery, true);
     }
+
 
 /*    
     public void installSortEnergyStreamsQuery(){

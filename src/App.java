@@ -2,10 +2,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import com.espertech.esper.client.EPStatementSyntaxException;
+import com.espertech.esper.epl.core.EngineImportService;
+
 
 public class App {
     public static void main(String[] args) {
 
+        EsperEngine esper = new EsperEngine();
+        
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         
         String line = "";
@@ -23,7 +28,7 @@ public class App {
                     }
                    
                     System.out.println(command);
-                    dispatchCommand(command);
+                    dispatchCommand(command, esper);
                     
                     line = "";
                     command = "";
@@ -38,13 +43,13 @@ public class App {
         }
     }
     
-    private static void dispatchCommand(String command){
+    private static void dispatchCommand(String command, EsperEngine esper){
         // add select * from stream => ['add','add select * from stream']
         String[] tokens = command.split("\\W+",2);
         
         if(tokens.length != 0){
             switch (tokens[0]) {
-                case "add": addCommandHandler(tokens); //System.out.println("add command not yet implemented.");
+                case "add": addCommandHandler(tokens, esper); //System.out.println("add command not yet implemented.");
                     break;
 
                 default: System.out.println("\'"+tokens[0]+"\'"+" is not recognized as a command.");          
@@ -52,14 +57,19 @@ public class App {
         }
     }
 
-    private static void addCommandHandler(String[] tokens){
+    private static void addCommandHandler(String[] tokens, EsperEngine esper){
         // add select * from stream => ['add','add select * from stream']                
         String eplQuery = tokens[1]; //query that will be sent to Esper Engine
        
-        System.out.println("Engine: "+eplQuery); 
-        //TODO com este EPL statement criar a objecto da class QueryMetadata e enviar isso para o esper
-        // Nota: so depois da query ser inserida noengine com sucesso é que lhe deve ser atribuid o ID
-       
+        try{
+              //TODO antes de enviares a query tens de retirar o --> ;
+              QueryMetadata queryMetaData = esper.installQuery(eplQuery);
+              System.out.println("Query instalada com suesso\n"+queryMetaData);
+        }catch(EPStatementSyntaxException e){
+            System.out.println("Compilation Erro: "+e.getMessage());            
+            System.out.println("Evaluated Expression: "+e.getExpression());            
+        }
+        
     }
 
 }

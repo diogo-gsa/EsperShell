@@ -9,21 +9,21 @@ import com.espertech.esper.client.UpdateListener;
 
 public class QueryListener implements UpdateListener {
     
-    private String queryId;
+    private int queryId;
     
-    public QueryListener(String queryId){
+    public QueryListener(int queryId){
         this.queryId = queryId;
     }
     
     @Override
     public void update(EventBean[] newEvents, EventBean[] oldEvents) {
         try{
-            System.out.print(queryId+" OUTput NEWevents:\t");            
+            System.out.print("Q_ID"+queryId+" OUTput NEWevents:\t");            
             for(EventBean eb : newEvents){
                 System.out.print("\n| "+eb.getUnderlying());
             }
             if(oldEvents != null){
-                System.out.print("\n"+queryId+" OUTput OLDevents:\t");            
+                System.out.print("\n"+"Q_ID"+queryId+" OUTput OLDevents:\t");            
                 for(EventBean eb : oldEvents){
                     System.out.print("| "+eb.getUnderlying());
                 }
