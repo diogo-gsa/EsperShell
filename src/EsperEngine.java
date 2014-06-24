@@ -4,6 +4,7 @@ import com.espertech.esper.client.EPRuntime;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
+import com.espertech.esper.client.EPStatementException;
 import com.espertech.esper.client.EPStatementSyntaxException;
 
 /*
@@ -42,7 +43,7 @@ public class EsperEngine {
 //        countInitializedQueries++;        
 //    }
     
-    public QueryMetadata installQuery(String eplQuery) throws EPStatementSyntaxException{
+    public QueryMetadata installQuery(String eplQuery) throws EPStatementException {
         
         //install query
         query = engineAdmin.createEPL(eplQuery);
