@@ -34,9 +34,8 @@ public class QueryMetadata {
     }
 
     public String toString(){
-        String res =    "QueryID: \t" + queryID + "\n" +
-                        "Statement:\t"+ queryStatement + "\n" +
-                        "IsActiveted: \t" + queryIsActivated + "\n";
+        String res =    "QueryID: " + queryID + "\t IsActiveted: \t" + queryIsActivated + "\n" +
+                        "Statement:\n"+ queryStatement;
         return res;
     }
 }

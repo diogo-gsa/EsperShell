@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.espertech.esper.client.EPStatementException;
 import com.espertech.esper.client.EPStatementSyntaxException;
@@ -15,6 +17,8 @@ public class App {
     public static void main(String[] args) {
 
         EsperEngine esper = new EsperEngine();
+        Map<Integer,QueryMetadata> queryCatalog = new TreeMap<Integer,QueryMetadata>(); 
+        
         
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         
@@ -30,11 +34,8 @@ public class App {
                 if(command.contains(";")){
                     if(command.equals("exit;")){
                         return;
-                    }
-                   
-                    System.out.println(command);
+                    }                   
                     dispatchCommand(command, esper);
-                    
                     line = "";
                     command = "";
                     System.out.print(">");                    
@@ -61,19 +62,20 @@ public class App {
             }
         }
     }
-  
+    
+    //add command -> install queries in the engine
     // syntax: add select * from stream;
     private static void add_CommandHandler(String[] tokens, EsperEngine esper){
         // add select * from stream => ['add','add select * from stream']                
         String eplQuery = tokens[1]; //query that will be sent to Esper Engine
-       
+        
         try{    
               //remover ";" do final do statement da query 
               QueryMetadata queryMetaData = esper.installQuery(eplQuery.replace(";",""));
-              System.out.println("Query successfully installed:\n"+queryMetaData);
+              System.out.println("\nQuery installed with success! \n"+queryMetaData+"\n");
         }catch(EPStatementException e ){
-            System.out.println("Compilation Error: "+e.getMessage());            
-            System.out.println("Evaluated Expression: "+e.getExpression());            
+            System.out.println("\nCompilation Error: "+e.getMessage());            
+            System.out.println("Evaluated Expression: "+e.getExpression()+"\n");            
         }
         
     }

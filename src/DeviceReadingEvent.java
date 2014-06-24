@@ -31,7 +31,7 @@ public class DeviceReadingEvent{
     }
     
     public String toString(){        
-        return "[id:"+id+" | ts:"+ts+" | value:"+value+"]";
+        return "[id:"+id+" | value:"+value+" | ts:"+ts+"]";
     }
 
 }
