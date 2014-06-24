@@ -14,14 +14,12 @@ import com.espertech.esper.epl.core.EngineImportService;
  */
 
 public class App {
-    public static void main(String[] args) {
-
+   
+    
+    public static void main(String[] args) {        
         EsperEngine esper = new EsperEngine();
-        Map<Integer,QueryMetadata> queryCatalog = new TreeMap<Integer,QueryMetadata>(); 
-        
         
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        
         String line = "";
         String command = "";
         System.out.print(">");
@@ -55,8 +53,9 @@ public class App {
         
         if(tokens.length != 0){
             switch (tokens[0]) {
-                case "add"  : add_CommandHandler(tokens, esper);    break;
-                case "send" : send_CommandHandler(tokens, esper);   break;
+                case "add"  : add_CommandHandler(tokens, esper);    break; // install queries
+                case "send" : send_CommandHandler(tokens, esper);   break; // send events into engine
+                case "list" : list_commandHandler(esper);           break;
                     
                 default: System.out.println("\'"+tokens[0]+"\'"+" is not recognized as a command.");          
             }
@@ -100,6 +99,10 @@ public class App {
             return;
         }
         esper.push(new DeviceReadingEvent(deviceID, ts, value));
+    }
+    
+    private static void list_commandHandler(EsperEngine esper){
+        esper.listInstalledQueries();
     }
 
 }
