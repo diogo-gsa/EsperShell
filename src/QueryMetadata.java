@@ -1,5 +1,9 @@
 import java.sql.Statement;
 
+/*
+ * @author Diogo Anjos (diogo.silva.anjos@tecnico.ulisboa.pt)
+ * 
+ */
 
 public class QueryMetadata {
 

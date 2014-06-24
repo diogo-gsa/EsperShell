@@ -18,12 +18,12 @@ public class QueryListener implements UpdateListener {
     @Override
     public void update(EventBean[] newEvents, EventBean[] oldEvents) {
         try{
-            System.out.print("Q_ID"+queryId+" OUTput NEWevents:\t");            
+            System.out.print("Query "+queryId+" OUTPUT NEW Events:\t");            
             for(EventBean eb : newEvents){
                 System.out.print("\n| "+eb.getUnderlying());
             }
             if(oldEvents != null){
-                System.out.print("\n"+"Q_ID"+queryId+" OUTput OLDevents:\t");            
+                System.out.print("\n"+"Q_ID"+queryId+" OUTPUT OLD Events:\t");            
                 for(EventBean eb : oldEvents){
                     System.out.print("| "+eb.getUnderlying());
                 }

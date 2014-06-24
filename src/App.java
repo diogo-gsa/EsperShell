@@ -6,6 +6,10 @@ import com.espertech.esper.client.EPStatementException;
 import com.espertech.esper.client.EPStatementSyntaxException;
 import com.espertech.esper.epl.core.EngineImportService;
 
+/*
+ * @author Diogo Anjos (diogo.silva.anjos@tecnico.ulisboa.pt)
+ * 
+ */
 
 public class App {
     public static void main(String[] args) {
@@ -79,28 +83,21 @@ public class App {
         // send (lib, 17, 234); => ['send','(lib, 17, 234)']                        
         String event = tokens[1]; //event: (lib, 17, 234)
         event = (event.replace("(","")).replace(")","").replaceAll("\\s+|;",""); //Remove white spaces = lib,17,234
-        System.out.println("After Trim: "+event);
         String[] eventParts = event.split(","); // ['lib','17','234']
 
         String deviceID;
-        double measure;
+        double value;
         long ts;
         
         try{
             deviceID = eventParts[0];
-            measure  = Double.parseDouble(eventParts[1]);
+            value  = Double.parseDouble(eventParts[1]);
             ts = Long.parseLong(eventParts[2]);
         }catch(Exception e){
             System.out.println("Error: Malformed input around ("+event+")");
             return;
         }
-        
-        System.out.println("deviceID: "+deviceID);
-        System.out.println("measure: "+measure);
-        System.out.println("ts: "+ts);
-        
-        
-
+        esper.push(new DeviceReadingEvent(deviceID, ts, value));
     }
 
 }
