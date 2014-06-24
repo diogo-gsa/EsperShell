@@ -38,6 +38,10 @@ public class QueryMetadata {
     public void turnOffQuery(){
         queryEngineObject.stop();
     }
+    
+    public void destroyQuery(){
+        queryEngineObject.destroy();
+    }
 
     public String toString(){
         String res =    "QueryID: " + queryID + "\t IsActiveted: " + queryIsActivated() + "\n" +

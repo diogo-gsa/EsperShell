@@ -1,4 +1,6 @@
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -82,6 +84,33 @@ public class EsperEngine {
         }
     }
     
+    public boolean dropQuery(int queryID){
+        try{ 
+            queryCatalog.get(queryID).destroyQuery();
+            queryCatalog.remove(queryID);
+            return true;
+        }catch(NullPointerException | ClassCastException e){
+            System.out.println("Error: Query with the id="+queryID+" does not exist");
+            return false;            
+        }
+    }
+    
+    public int dropAllQueries(){
+        int droppedQueries = 0;
+        try{           
+            //to avoid ConcurrentModificationException
+            List<Integer>  keyset = new ArrayList<Integer>(queryCatalog.keySet());
+            for(int queryID : keyset){
+                queryCatalog.get(queryID).destroyQuery();
+                queryCatalog.remove(queryID);
+                droppedQueries++;
+            }
+        }catch(Exception e){
+            System.out.println("Error: something went wrong during dropAll");
+        }
+        return droppedQueries;
+    }
+
     public void listInstalledQueries(){
         System.out.println("========== Installed Queries ("+queryCatalog.keySet().size()+") ==========");
         for(int queryId : queryCatalog.keySet()){
@@ -89,6 +118,5 @@ public class EsperEngine {
             System.out.println("-------------------------------------------");            
         }        
     }
-
 
 }

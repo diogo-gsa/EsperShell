@@ -62,14 +62,20 @@ public class App {
                     list_commandHandler(esper);
                     break;
                 case "turnOn": //activate queries
-                    //turnOn -5; => ['turnOn', '-5;'] if using "\\s+"
-                    //turnOn -5; => ['turnOn', '5;'] if using "\\W+"
+                    //turnOn -5; => ['turnOn', '-5;'] if using "\\s+", ['turnOn', '5;'] if using "\\W+"
                     turnON_commandHandler(esper,command.split("\\s+", 2)); 
                     break;
                 case "turnOff": //desactivate queries
                     turnOFF_commandHandler(esper,command.split("\\s+", 2));
                     break;
-
+                case "drop" :
+                    drop_commandHandler(esper,command.split("\\s+", 2));
+                    break;
+                case "dropAll" :
+                    dropAll_commandHandler(esper);
+                    break;
+                
+                    
                 default:
                     System.out.println("\'" + tokens[0] + "\'" + " is not recognized as a command.");
             }
@@ -139,8 +145,22 @@ public class App {
         } catch (Exception e) {
             System.out.println("Error: Malformed input around (" + tokens[1] + ")");
         }
+    }
     
+    private static void drop_commandHandler(EsperEngine esper, String[] tokens) {
+        try {
+            int queryID = Integer.parseInt(tokens[1].replace(";", ""));
+            if(esper.dropQuery(queryID)){
+                System.out.println("\nQuery "+queryID+" was dropped.\n");
+            }
+        } catch (Exception e) {
+            System.out.println("Error: Malformed input around (" + tokens[1] + ")");
+        }
+    }
     
+    private static void dropAll_commandHandler(EsperEngine esper) {
+        int countDroppedQueries = esper.dropAllQueries();
+        System.out.println("\n"+countDroppedQueries+" queries were dropped.\n");
     }
 
     
