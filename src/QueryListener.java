@@ -28,7 +28,7 @@ public class QueryListener
         try {
             System.out.print("Query " + queryId + " OUTPUT " + typeOfEvent + " Events:");
             for (EventBean eb : events) {
-                System.out.print("\n| " + eb.getUnderlying());
+                System.out.print("\n| " + eb.getUnderlying()+"\n");
             }
         } catch (Exception e) {
             e.printStackTrace();

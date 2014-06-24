@@ -19,7 +19,6 @@ public class EsperEngine {
     EPServiceProvider   esperEngine;
     EPRuntime           engineRuntime;
     EPAdministrator     engineAdmin;
-    EPStatement         query;
 
     Map<Integer,QueryMetadata> queryCatalog; 
     int countInitializedQueries;
@@ -44,29 +43,50 @@ public class EsperEngine {
         engineRuntime.sendEvent(event);
     }
     
-    public QueryMetadata installQuery(String eplQuery) throws EPStatementException {
+    public QueryMetadata installQuery(String eplQueryExpression) throws EPStatementException {
         
         //install query
-        query = engineAdmin.createEPL(eplQuery);
+        //EPStatement = representa a query enquanto objecto dentro do engine
+        EPStatement queryEngineObject = engineAdmin.createEPL(eplQueryExpression);
         
         //get queryID
         countInitializedQueries++;        
         
         //create new listener
         QueryListener listener = new QueryListener(countInitializedQueries);
-        query.addListener(listener);
+        queryEngineObject.addListener(listener);
             
-        QueryMetadata qmd = new QueryMetadata(countInitializedQueries, eplQuery, true);
+        QueryMetadata qmd = new QueryMetadata(countInitializedQueries, eplQueryExpression, queryEngineObject);
         queryCatalog.put(qmd.getQueryID(), qmd);
         
         return qmd;
     }          
 
+    public boolean turnOnQuery(int queryID){
+        try{
+            queryCatalog.get(queryID).turnOnQuery();
+            return true;
+        }catch(NullPointerException | ClassCastException e){
+            System.out.println("Error: Query with the id="+queryID+" does not exist");  
+            return false;
+        }
+    }
+    
+    public boolean turnOffQuery(int queryID){
+        try{ 
+            queryCatalog.get(queryID).turnOffQuery();
+            return true;
+        }catch(NullPointerException | ClassCastException e){
+            System.out.println("Error: Query with the id="+queryID+" does not exist");
+            return false;            
+        }
+    }
+    
     public void listInstalledQueries(){
-        System.out.println("========== Installed Queries ==========");
+        System.out.println("========== Installed Queries ("+queryCatalog.keySet().size()+") ==========");
         for(int queryId : queryCatalog.keySet()){
             System.out.println(queryCatalog.get(queryId));
-            System.out.println("---------------------------------------");            
+            System.out.println("-------------------------------------------");            
         }        
     }
 
