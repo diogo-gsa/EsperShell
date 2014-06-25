@@ -18,7 +18,7 @@ public class App {
     public static void main(String[] args) {
         EsperEngine esper = new EsperEngine();
 
-        startDataAcquisitionThread();
+        startDataAcquisitionThread(esper);
         
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String line = "";
@@ -166,8 +166,8 @@ public class App {
     }
 
     
-    private static void startDataAcquisitionThread(){
-        Thread dataAquisitionThead = new Thread(new DataAcquisitionDriver());
+    private static void startDataAcquisitionThread(EsperEngine esper){
+        Thread dataAquisitionThead = new Thread(new DataAcquisitionDriver(esper));
         dataAquisitionThead.start();
     }
     
