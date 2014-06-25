@@ -35,12 +35,16 @@ public class DataAcquisitionDriver
 //                DataOutputStream sendToSocket = new DataOutputStream(clientSocket.getOutputStream());
                 
                 System.out.println("vou ler a mensagem que cliente enviou");                
-                clientRequest = receivedFromSocket.readLine();
-                System.out.println("vou enviar mensagem do cliente para o handler");                
-
-                //TODO while(                
-                handleClientRequest(clientRequest); // PDU format excepted: (id:string,measure:float,ts:long)
-            
+                
+                while(true){                       
+                    if(receivedFromSocket.ready()){
+                        clientRequest = receivedFromSocket.readLine();
+                    
+                    System.out.println("vou enviar mensagem do cliente para o handler");                
+                    handleClientRequest(clientRequest); // PDU format excepted: (id:string,measure:float,ts:long)
+                    }
+               }
+                
             }
         
         } catch (IOException e) {
