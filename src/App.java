@@ -18,6 +18,8 @@ public class App {
     public static void main(String[] args) {
         EsperEngine esper = new EsperEngine();
 
+        startDataAcquisitionThread();
+        
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String line = "";
         String command = "";
@@ -163,6 +165,12 @@ public class App {
         System.out.println("\n"+countDroppedQueries+" queries were dropped.\n");
     }
 
+    
+    private static void startDataAcquisitionThread(){
+        Thread dataAquisitionThead = new Thread(new DataAcquisitionDriver());
+        dataAquisitionThead.start();
+    }
+    
     
     //------------------------------------
     //TODO bugs to solve:
