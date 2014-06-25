@@ -27,35 +27,41 @@ public class DataAcquisitionDriver
     public void run() {
         try {
             ServerSocket welcomeSocket = getWelcomeSocket();
-            String clientRequest;
-            while(true){
-                Socket clientSocket = welcomeSocket.accept(); // stay blocked, waiting for a client connection                
-                System.out.println("tenho um cliente ligado");
-                BufferedReader receivedFromSocket = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-//                DataOutputStream sendToSocket = new DataOutputStream(clientSocket.getOutputStream());
-                
-                System.out.println("vou ler a mensagem que cliente enviou");                
-                
-                while(true){                       
-                    if(receivedFromSocket.ready()){
-                        clientRequest = receivedFromSocket.readLine();
-                    
-                    System.out.println("vou enviar mensagem do cliente para o handler");                
-                    handleClientRequest(clientRequest); // PDU format excepted: (id:string,measure:float,ts:long)
-                    }
-               }
-                
+            String eventSentBySimulator;
+
+            Socket clientSocket = welcomeSocket.accept(); // stay blocked, waiting for a client connection                
+            System.out.println("Connection established with simulator");
+
+            BufferedReader receivedFromSocket = new BufferedReader(new InputStreamReader(
+                    clientSocket.getInputStream()));
+            //DataOutputStream sendToSocket = new DataOutputStream(clientSocket.getOutputStream());
+
+            System.out.println("Waiting for events ...");
+            while (true) {
+                if (receivedFromSocket.ready()) {
+                    eventSentBySimulator = receivedFromSocket.readLine();
+                    handleEventRequest(eventSentBySimulator); // PDU format excepted: (id:string,measure:float,ts:long)
+                }
             }
-        
         } catch (IOException e) {
-            System.out.println("Erro: Estou com problemas a receber eventos =(");
-            e.printStackTrace();
+            System.out.println("Error: Unable to connect with simulator");
+            //e.printStackTrace();
         }
     }
 
 
-    private void handleClientRequest(String readLine) {
-        System.out.println("------received from client:"+readLine);
+    private void handleEventRequest(String event) {
+        //System.out.println("Events that will be sent to the engine:" + event); //TODO DEBUG
+        event = (event.replace("(", "")).replace(")", "").replaceAll("\\s+|;", ""); //Remove white spaces = lib,17,234
+        String[] eventParts = event.split(","); // ['lib','17','234']
+        try {
+            String deviceID = eventParts[0];
+            double value = Double.parseDouble(eventParts[1]);
+            long ts = Long.parseLong(eventParts[2]);
+            esper.push(new DeviceReadingEvent(deviceID, ts, value));
+        } catch (Exception e) {
+            System.out.println("Error: Malformed event syntax from simulator");
+        }
     }
 
     private ServerSocket getWelcomeSocket() throws IOException {
@@ -63,7 +69,8 @@ public class DataAcquisitionDriver
         try {
             welcomeSocket = new ServerSocket(__DEFAULT_PORT__);
         } catch (BindException e) {
-            System.out.println("Default port "+__DEFAULT_PORT__+" is already being used. We are looking for another one...");
+            System.out.println("Default port " + __DEFAULT_PORT__
+                    + " is already being used. We are looking for another one...");
             welcomeSocket = new ServerSocket(0);
         }
         System.out.println("Listening for events at port: " + welcomeSocket.getLocalPort());
