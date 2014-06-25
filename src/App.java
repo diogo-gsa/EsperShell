@@ -164,7 +164,7 @@ public class App {
     }
 
     
-    //-----------------------------------
+    //------------------------------------
     //TODO bugs to solve:
     //TODO shell aceita ( e não devia) query correcta + \n + lixo 
     //-----------------------------------
