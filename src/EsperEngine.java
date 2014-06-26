@@ -83,6 +83,49 @@ public class EsperEngine {
             return false;            
         }
     }
+
+    public boolean dontPrintToTerminal(int queryID) {
+        try{ 
+            queryCatalog.get(queryID).dontPrintToTerminal();
+            return true;
+        }catch(NullPointerException | ClassCastException e){
+            System.out.println("Error: Query with the id="+queryID+" does not exist");
+            return false;            
+        }
+    }
+    
+    public boolean printToTerminal(int queryID) {
+        try{ 
+            queryCatalog.get(queryID).printToTerminal();
+            return true;
+        }catch(NullPointerException | ClassCastException e){
+            System.out.println("Error: Query with the id="+queryID+" does not exist");
+            return false;            
+        }
+    }
+    
+    public boolean printToFile(int queryID) {
+        try{ 
+            queryCatalog.get(queryID).printToFile();
+            return true;
+        }catch(NullPointerException | ClassCastException e){
+            System.out.println("Error: Query with the id="+queryID+" does not exist");
+            return false;            
+        }
+    }
+    
+    public boolean dontPrintToFile(int queryID) {
+        try{ 
+            queryCatalog.get(queryID).dontPrintToFile();
+            return true;
+        }catch(NullPointerException | ClassCastException e){
+            System.out.println("Error: Query with the id="+queryID+" does not exist");
+            return false;            
+        }
+    }
+    
+    
+    
     
     public boolean dropQuery(int queryID){
         try{ 

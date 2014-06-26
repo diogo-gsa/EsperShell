@@ -76,13 +76,25 @@ public class App {
                 case "dropAll" :
                     dropAll_commandHandler(esper);
                     break;
-                
+                case "printToFile" :
+                    printToFile_commandHandler(esper,command.split("\\s+", 2));
+                    break;
+                case "dontPrintToFile" :
+                    dontPrintToFile_commandHandler(esper,command.split("\\s+", 2));
+                    break;
+                case "printToTerminal" :
+                    printToTerminal_commandHandler(esper,command.split("\\s+", 2));
+                    break;
+                case "dontPrintToTerminal" :
+                    dontPrintToTerminal_commandHandler(esper,command.split("\\s+", 2));
+                    break;
                     
                 default:
                     System.out.println("\'" + tokens[0] + "\'" + " is not recognized as a command.");
             }
         }
     }
+
 
     //add command -> install queries in the engine
     // syntax: add select * from stream;
@@ -127,6 +139,53 @@ public class App {
         esper.listInstalledQueries();
     }
 
+    
+    private static void dontPrintToTerminal_commandHandler(EsperEngine esper, String[] tokens) {
+        try {
+            int queryID = Integer.parseInt(tokens[1].replace(";", ""));
+            if(esper.dontPrintToTerminal(queryID)){
+                System.out.println("\nQuery "+queryID+" will not print to terminal.\n");
+            }
+        } catch (Exception e) {
+            System.out.println("Error: Malformed input around (" + tokens[1] + ")");
+        }
+        
+    }
+
+    private static void printToTerminal_commandHandler(EsperEngine esper, String[] tokens) {
+        try {
+            int queryID = Integer.parseInt(tokens[1].replace(";", ""));
+            if(esper.printToTerminal(queryID)){
+                System.out.println("\nQuery "+queryID+" will print to terminal.\n");
+            }
+        } catch (Exception e) {
+            System.out.println("Error: Malformed input around (" + tokens[1] + ")");
+        }
+    }
+
+    private static void dontPrintToFile_commandHandler(EsperEngine esper, String[] tokens) {
+        try {
+            int queryID = Integer.parseInt(tokens[1].replace(";", ""));
+            if(esper.dontPrintToFile(queryID)){
+                System.out.println("\nQuery "+queryID+" will not print to file.\n");
+            }
+        } catch (Exception e) {
+            System.out.println("Error: Malformed input around (" + tokens[1] + ")");
+        }
+    }
+
+    private static void printToFile_commandHandler(EsperEngine esper, String[] tokens) {
+        try {
+            int queryID = Integer.parseInt(tokens[1].replace(";", ""));
+            if(esper.printToFile(queryID)){
+                System.out.println("\nQuery "+queryID+" will print to file.\n");
+            }
+        } catch (Exception e) {
+            System.out.println("Error: Malformed input around (" + tokens[1] + ")");
+        }
+    }
+    
+    
     private static void turnON_commandHandler(EsperEngine esper, String[] tokens) {
         try {
             int queryID = Integer.parseInt(tokens[1].replace(";", ""));

@@ -17,14 +17,14 @@ public class QueryListener
     @Override
     public void update(EventBean[] newEvents, EventBean[] oldEvents) {
         if (newEvents != null) {
-            printOutput(newEvents, "NEW");
+            printOutputToTerminal(newEvents, "NEW");
         }
         if (oldEvents != null) {
-            printOutput(newEvents, "OLD");
+            printOutputToTerminal(newEvents, "OLD");
         }
     }
 
-    private void printOutput(EventBean[] events, String typeOfEvent) {
+    private void printOutputToTerminal(EventBean[] events, String typeOfEvent) {
         try {
             System.out.print("Query " + queryId + " OUTPUT " + typeOfEvent + " Events:");
             for (EventBean eb : events) {

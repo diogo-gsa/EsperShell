@@ -11,14 +11,49 @@ public class QueryMetadata {
 
     private int queryID;
     private String queryExpression;
-    private EPStatement queryEngineObject; 
+    private EPStatement queryEngineObject;
+    private boolean printToTerminal;
+    private boolean printToFile;
+    private String outputFilename;
     
     public QueryMetadata(int queryID, String queryStatement, EPStatement queryEngineObject){
         this.queryID = queryID;
         this.queryExpression = queryStatement;
         this.queryEngineObject = queryEngineObject;
+        this.printToTerminal = true; //default behavior 
+        this.printToFile = false;    //default behavior
+        this.outputFilename = queryID +"_output.txt";
     }
 
+    
+    public void printToTerminal(){
+        printToTerminal = true;
+    }
+    
+    public void dontPrintToTerminal(){
+        printToTerminal = false;
+    }
+    
+    public void printToFile(){
+        printToFile = true;
+    }
+    
+    public void dontPrintToFile(){
+        printToFile = false;
+    }
+    
+    public boolean getPrintToTerminal(){
+        return printToTerminal;
+    }
+    
+    public boolean getPrintToFile(){
+        return printToFile;
+    }
+    
+    public String getOutputFilename(){
+        return outputFilename;
+    }
+    
     public int getQueryID() {
         return queryID;
     }
@@ -44,7 +79,16 @@ public class QueryMetadata {
     }
 
     public String toString(){
-        String res =    "QueryID: " + queryID + "\t IsActiveted: " + queryIsActivated() + "\n" +
+        String printToFile = getPrintToFile() + "";
+        
+        if(getPrintToFile()){
+            printToFile += " ("+getOutputFilename()+")";
+        }
+        
+        String res =    "QueryID: " + queryID + 
+                        "\t\t IsActiveted: " + queryIsActivated() + "\n"+ 
+                        "PrintToTerminal: " + getPrintToTerminal() + 
+                        "\t PrintToFile: " + printToFile + "\n"  +
                         "Statement:\n"+ queryExpression;
         return res;
     }
