@@ -12,9 +12,15 @@ import java.net.Socket;
  * @author Diogo Anjos (diogo.silva.anjos@tecnico.ulisboa.pt)
  */
 
+
+//******************************************
+//    DEPRECATED CLASS (Vai ser apagada...)
+//******************************************
 public class DataAcquisitionDriver
         implements Runnable {
 
+
+    
     private EsperEngine esper;
     private int __DEFAULT_PORT__;
     private String __CONNECTIVITY_INTERFACE__; // "SOCKET" or "DEVICE_API" 
@@ -91,5 +97,6 @@ public class DataAcquisitionDriver
         return welcomeSocket;
     }
     //=================================================================================================
+
 
 }
