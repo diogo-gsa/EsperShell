@@ -17,14 +17,29 @@ public class DataAcquisitionDriver
 
     private EsperEngine esper;
     private int __DEFAULT_PORT__;
+    private String __CONNECTIVITY_INTERFACE__; // "SOCKET" or "DEVICE_API" 
+
 
     public DataAcquisitionDriver(EsperEngine esper) {
         this.esper = esper;
         __DEFAULT_PORT__ = 7000; //7000;
+        __CONNECTIVITY_INTERFACE__ = "DEVICE_API";
     }
 
     @Override
     public void run() {
+        if (__CONNECTIVITY_INTERFACE__.equals("DEVICE_API")) {
+            //TODO
+        }
+        if (__CONNECTIVITY_INTERFACE__.equals("SOCKET")) {
+            initSocketConnection();
+        }
+    }
+
+
+
+    //== Code Related with Socket Connection  =========================================================    
+    private void initSocketConnection() {
         try {
             ServerSocket welcomeSocket = getWelcomeSocket();
             String eventSentBySimulator;
@@ -40,7 +55,7 @@ public class DataAcquisitionDriver
             while (true) {
                 if (receivedFromSocket.ready()) {
                     eventSentBySimulator = receivedFromSocket.readLine();
-                    handleEventRequest(eventSentBySimulator); // PDU format excepted: (id:string,measure:float,ts:long)
+                    handleEventRequestFromSocket(eventSentBySimulator); // PDU format excepted: (id:string,measure:float,ts:long)
                 }
             }
         } catch (IOException e) {
@@ -49,8 +64,7 @@ public class DataAcquisitionDriver
         }
     }
 
-
-    private void handleEventRequest(String event) {
+    private void handleEventRequestFromSocket(String event) {
         //System.out.println("Events that will be sent to the engine:" + event); //TODO DEBUG
         event = (event.replace("(", "")).replace(")", "").replaceAll("\\s+|;", ""); //Remove white spaces = lib,17,234
         String[] eventParts = event.split(","); // ['lib','17','234']
@@ -76,6 +90,6 @@ public class DataAcquisitionDriver
         System.out.println("Listening for events at port: " + welcomeSocket.getLocalPort());
         return welcomeSocket;
     }
-
+    //=================================================================================================
 
 }
