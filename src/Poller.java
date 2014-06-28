@@ -33,7 +33,6 @@ public class Poller {
     }
 
     public synchronized void addAddress(String message, long milisecondsDelay) {
-
         Delayed newDelayedEvent = new DelayedEvent(message, milisecondsDelay);
 
         if (!mapWithQueueDelayedEvents.containsKey(message)) {
@@ -57,9 +56,7 @@ public class Poller {
     }
 
 
-
-
-    public String getNext() {
+    public synchronized String getNext() {
         return headQueue.poll();
     }
 
@@ -75,7 +72,8 @@ public class Poller {
                         if (isStarted) {
                             headQueue.add(element.getMessage());
                         }
-                        Poller.this.addAddress(element.getMessage(), element.getInitialExpirationDelay());
+                        // reschedule
+                        addAddress(element.getMessage(), element.getInitialExpirationDelay());
                     }
                 }
             }
