@@ -19,8 +19,8 @@ public class Poller {
         delayQueue = new DelayQueue<>();
         headQueue = new LinkedList<>();
         mapWithQueueDelayedEvents = new TreeMap<String, Delayed>();
-        isStarted = false;
-        Thread thrExpiredEventsHandler = new Thread(new ExpiredEventsHandler()); 
+        isStarted = true;
+        Thread thrExpiredEventsHandler = new Thread(new ExpiredEventsHandler());
         thrExpiredEventsHandler.start();
     }
 
@@ -32,7 +32,7 @@ public class Poller {
         isStarted = false;
     }
 
-    public synchronized void addAddress(String message, int milisecondsDelay) {
+    public synchronized void addAddress(String message, long milisecondsDelay) {
 
         Delayed newDelayedEvent = new DelayedEvent(message, milisecondsDelay);
 
@@ -59,21 +59,25 @@ public class Poller {
 
 
 
-    public void getNext() {
-        //TODO implement        
+    public String getNext() {
+        return headQueue.poll();
     }
 
-    // to be 
-    private void reschedule(final long delay) {
 
-    }
-
-    private class ExpiredEventsHandler implements Runnable {
-        
+    private class ExpiredEventsHandler
+            implements Runnable {
         @Override
         public void run() {
-            while(true){
-             //TODO estas a fazer isto.....  
+            while (true) {
+                synchronized (Poller.this) {
+                    DelayedEvent element = (DelayedEvent) delayQueue.poll();
+                    if (element != null) {
+                        if (isStarted) {
+                            headQueue.add(element.getMessage());
+                        }
+                        Poller.this.addAddress(element.getMessage(), element.getInitialExpirationDelay());
+                    }
+                }
             }
         }
     }
@@ -97,8 +101,14 @@ public class Poller {
                     + TimeUnit.NANOSECONDS.convert(expirationDelay, TimeUnit.MILLISECONDS);
         }
 
+
         public long getInitialExpirationDelay() {
             return expirationDelay;
+        }
+
+
+        public String getMessage() {
+            return message;
         }
 
         @Override
