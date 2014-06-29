@@ -1,12 +1,15 @@
+package datastorm.espershell;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Map;
-import java.util.TreeMap;
+
+import Datastream.Measure;
 
 import com.espertech.esper.client.EPStatementException;
-import com.espertech.esper.client.EPStatementSyntaxException;
-import com.espertech.esper.epl.core.EngineImportService;
+
+import datastorm.espershell.dataacquisition.ModbusDriver;
+import datastorm.espershell.esperengine.EsperEngine;
+import datastorm.espershell.esperengine.QueryMetadata;
 
 /*
  * @author Diogo Anjos (diogo.silva.anjos@tecnico.ulisboa.pt)
@@ -111,6 +114,7 @@ public class App {
 
         try {
             //remover ";" do final do statement da query 
+            //TODO[Fix] mete isto a devlver uma string em vez do objecto esta classe nao te de conhecer este bjecto
             QueryMetadata queryMetaData = esper.installQuery(eplQuery.replace(";", ""));
             System.out.println("\nQuery installed with success! \n" + queryMetaData + "\n");
         } catch (EPStatementException e) {
@@ -139,7 +143,7 @@ public class App {
             System.out.println("Error: Malformed input around (" + event + ")");
             return;
         }
-        esper.push(new DeviceReadingEvent(deviceID, ts, value));
+        esper.push(new Measure(deviceID, ts, value));
     }
 
     private static void list_commandHandler(EsperEngine esper) {

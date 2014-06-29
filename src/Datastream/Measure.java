@@ -1,4 +1,4 @@
-
+package Datastream;
 
 /*
  * @author Diogo Anjos (diogo.silva.anjos@tecnico.ulisboa.pt)
@@ -6,13 +6,13 @@
  * with the readings from the DeviceConnectivityService.
  */
 
-public class DeviceReadingEvent{
+public class Measure{
 
     private String id;
     private long ts;    
     private double value;    
     
-    public DeviceReadingEvent(String id, long ts, double value) {
+    public Measure(String id, long ts, double value) {
         this.id = id;
         this.ts = ts;
         this.value = value;        

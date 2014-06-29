@@ -1,4 +1,4 @@
-import java.util.Map;
+package datastorm.espershell.dataacquisition;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -94,6 +94,7 @@ public class ModbusDriver /* implements DeviceAPI */ {
                 String value = poller.getNext();
                 try {
                     if(value != null){
+//                        System.out.println(value); //DEBUG
                         metersReadyToBeReaded.put(value);
                     }
                 } catch (InterruptedException e) {
