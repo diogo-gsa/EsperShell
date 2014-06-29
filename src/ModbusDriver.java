@@ -1,4 +1,6 @@
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import modbus.master.ModbusMasterLib;
 
@@ -18,13 +20,16 @@ public class ModbusDriver /* implements DeviceAPI */ {
     int lengthRegisters;// number of modbus packet registers that we want to read (3 = tri-phase consumption)
     
     Poller poller;
+    BlockingQueue<String> metersReadyToBeReaded;
     
     
     public ModbusDriver(){
         master = new ModbusMasterLib();
         poller = new Poller();
-        poller.start();
+        metersReadyToBeReaded = new LinkedBlockingQueue<String>();
         configPoller();
+        (new PollerReaderThread()).start();
+        (new ReadModbusmasterThread()).start();
     }
     
     //configure ModbusMaster to read a given energy meter
@@ -46,5 +51,81 @@ public class ModbusDriver /* implements DeviceAPI */ {
             poller.addAddress(deviceID, pollerSettings.get(deviceID));
         }
     }
+    
+    private class ReadModbusmasterThread extends Thread{
+        public ReadModbusmasterThread() {
+            super("READ_MODBUSMASTER_THREAD");
+        }
+        @Override
+        public void run() {
+            while(true){
+                try {
+                    String meterToRead = metersReadyToBeReaded.take();
+                    //TODO codigo que  lê o meter:meterToRead
+                    //TODO codigo que envia isto para o ESPER
+                    //System.out.println("MeterToRead: "+meterToRead); //TODO DEBUG
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    
+    private class PollerReaderThread extends Thread{
+        public PollerReaderThread() {
+            super("POLLER_READER_THREAD");
+        }
+        @Override
+        public void run() {
+            while(true){
+                String value = poller.getNext();
+                try {
+                    if(value != null){
+                        metersReadyToBeReaded.put(value);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    
+    //-----------------------------------------------------------------------
+//    private class TestThread implements Runnable{
+//
+//        @Override
+//        public void run() {
+//            for (int i = 1; i <= 20; i++) {
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                String next = getAllAvailable(poller);
+//                if (next != null) {
+//                    System.out.println("..."+i+" Received: " + next);
+//                } else {
+//                    System.out.println("..."+i);
+//                }
+//            }
+//        }
+//        
+//        private  String getAllAvailable(Poller poller){
+//            String res = null;
+//            while(true){
+//                String next = poller.getNext(); 
+//                if(next == null){
+//                    return res;
+//                }else{
+//                    if(res == null){
+//                        res = next;
+//                    }else{
+//                        res = res +","+ next; 
+//                    }
+//                }
+//            }
+//        }
+//    } 
+    
     
 }
