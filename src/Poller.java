@@ -6,22 +6,24 @@ import java.util.concurrent.DelayQueue;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 
+/*
+ * @author Diogo Anjos (diogo.silva.anjos@tecnico.ulisboa.pt)
+ * 
+ */
 
 public class Poller {
 
-
-    private Map<String, Delayed> mapWithQueueDelayedEvents;
-    private DelayQueue<Delayed> delayQueue;
-    private Queue<String> headQueue;
+    private Map<String, Delayed> delayedEventsMap;
+    private DelayQueue<Delayed> delayedEventsQueue;
+    private Queue<String> readyToUseEventsQueue;
     private boolean isStarted;
 
     public Poller() {
-        delayQueue = new DelayQueue<>();
-        headQueue = new LinkedList<>();
-        mapWithQueueDelayedEvents = new TreeMap<String, Delayed>();
+        delayedEventsQueue = new DelayQueue<>();
+        readyToUseEventsQueue = new LinkedList<>();
+        delayedEventsMap = new TreeMap<String, Delayed>();
         isStarted = true;
-        Thread thrExpiredEventsHandler = new Thread(new ExpiredEventsHandler());
-        thrExpiredEventsHandler.start();
+        (new ExpiredEventsPollerThread()).start();
     }
 
     public void start() {
@@ -35,44 +37,51 @@ public class Poller {
     public synchronized void addAddress(String message, long milisecondsDelay) {
         Delayed newDelayedEvent = new DelayedEvent(message, milisecondsDelay);
 
-        if (!mapWithQueueDelayedEvents.containsKey(message)) {
-            mapWithQueueDelayedEvents.put(message, newDelayedEvent);
-            delayQueue.add(newDelayedEvent);
+        if (!delayedEventsMap.containsKey(message)) {
+            delayedEventsMap.put(message, newDelayedEvent);
+            delayedEventsQueue.add(newDelayedEvent);
         } else {
-            Delayed oldDelayedEvent = mapWithQueueDelayedEvents.get(message);
-            mapWithQueueDelayedEvents.remove(message);
-            mapWithQueueDelayedEvents.put(message, newDelayedEvent);
-            delayQueue.remove(oldDelayedEvent);
-            delayQueue.add(newDelayedEvent);
+            Delayed oldDelayedEvent = delayedEventsMap.get(message);
+            delayedEventsMap.remove(message);
+            delayedEventsMap.put(message, newDelayedEvent);
+            delayedEventsQueue.remove(oldDelayedEvent);
+            delayedEventsQueue.add(newDelayedEvent);
         }
     }
 
     public synchronized void removeAddress(String message) {
-        if (mapWithQueueDelayedEvents.containsKey(message)) {
-            Delayed de = mapWithQueueDelayedEvents.get(message);
-            mapWithQueueDelayedEvents.remove(message);
-            delayQueue.remove(de);
+        if (delayedEventsMap.containsKey(message)) {
+            Delayed de = delayedEventsMap.get(message);
+            delayedEventsMap.remove(message);
+            delayedEventsQueue.remove(de);
         }
     }
 
 
     public synchronized String getNext() {
-        return headQueue.poll();
+        return readyToUseEventsQueue.poll();
     }
 
-
-    private class ExpiredEventsHandler
-            implements Runnable {
+    /* 
+     * This thread looks for new available events, spinning around delayedEventsQueue.
+     * When events become available (in the delayedEventsQueue) they are sent to readyToUseEventsQueue,
+     *  and then rescheduled (again) in the delayedEventsQueue.
+     */
+    private class ExpiredEventsPollerThread extends Thread {
+        public ExpiredEventsPollerThread() {
+            super("EXPIRED_EVENTS_POLLER_THREAD");
+        }
+        
         @Override
         public void run() {
             while (true) {
                 synchronized (Poller.this) {
-                    DelayedEvent element = (DelayedEvent) delayQueue.poll();
+                    DelayedEvent element = (DelayedEvent) delayedEventsQueue.poll();
                     if (element != null) {
                         if (isStarted) {
-                            headQueue.add(element.getMessage());
+                            readyToUseEventsQueue.add(element.getMessage());
                         }
-                        // reschedule
+                        // reschedule the event in the delayQueue
                         addAddress(element.getMessage(), element.getInitialExpirationDelay());
                     }
                 }
@@ -81,7 +90,6 @@ public class Poller {
     }
 
 
-    // inner class
     private class DelayedEvent
             implements Delayed {
 

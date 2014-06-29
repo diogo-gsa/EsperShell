@@ -1,3 +1,5 @@
+import java.util.Map;
+
 import modbus.master.ModbusMasterLib;
 
 
@@ -8,19 +10,21 @@ import modbus.master.ModbusMasterLib;
 
 public class ModbusDriver /* implements DeviceAPI */ {
 
-//    ModbusDriverImplementation worker;
     ModbusMasterLib master;
     
     // Metadata to configure master to read a given datapoint
     int slaveId;        // energyMeterId (e.g. 2 = library meter)
     int offsetRegister; // first modbus packet that we want to read (e.g. 1)
     int lengthRegisters;// number of modbus packet registers that we want to read (3 = tri-phase consumption)
-
+    
+    Poller poller;
+    
+    
     public ModbusDriver(){
         master = new ModbusMasterLib();
-        
-//        worker = new ModbusDriverImplementation();
-//        worker.start();
+        poller = new Poller();
+        poller.start();
+        configPoller();
     }
     
     //configure ModbusMaster to read a given energy meter
@@ -36,20 +40,11 @@ public class ModbusDriver /* implements DeviceAPI */ {
         return master.readInputRegisters(slaveId, offsetRegister, lengthRegisters);
     }
     
-    
-    /*
-    private class ModbusDriverImplementation implements Runnable{
-       
-       public void start(){
-           Thread thr = new Thread(this);
-           thr.run();
-       }
-       
-        @Override
-        public void run() {
-            // TODO Auto-generated method stub
-            
+    private void configPoller(){
+        Map<String,Long> pollerSettings = (new ConfigFile()).getSettings(); 
+        for(String deviceID : pollerSettings.keySet()){
+            poller.addAddress(deviceID, pollerSettings.get(deviceID));
         }
-        
-    }*/
+    }
+    
 }
