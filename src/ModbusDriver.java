@@ -63,7 +63,7 @@ public class ModbusDriver /* implements DeviceAPI */ {
                     String meterToRead = metersReadyToBeReaded.take();
                     //TODO codigo que  lê o meter:meterToRead
                     //TODO codigo que envia isto para o ESPER
-                    //System.out.println("MeterToRead: "+meterToRead); //TODO DEBUG
+                    //System.out.println("MeterToRead: "+meterToRead); //TODO  DEBUG
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
