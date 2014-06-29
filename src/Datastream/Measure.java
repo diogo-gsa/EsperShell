@@ -8,30 +8,30 @@ package Datastream;
 
 public class Measure{
 
-    private String id;
-    private long ts;    
-    private double value;    
+    private String meterId; 
+    private long timestamp; 
+    private double measure;
     
-    public Measure(String id, long ts, double value) {
-        this.id = id;
-        this.ts = ts;
-        this.value = value;        
+    public Measure(String id, long ts, double measure) {
+        this.meterId = id;
+        this.timestamp = ts;
+        this.measure = measure;        
     }
     
-    public double getValue() {
-        return value;
+    public double getMeasure() {
+        return measure;
     }
     
-    public String getId() {
-        return id;
+    public String getMeterId() {
+        return meterId;
     }
 
-    public long getTs() {   
-        return ts;
+    public long getTimestamp() {   
+        return timestamp;
     }
     
     public String toString(){        
-        return "[id:"+id+" | value:"+value+" | ts:"+ts+"]";
+        return "[meterId:"+meterId+" | timestamp:"+timestamp+" | measure:"+measure+"]";
     }
 
 }

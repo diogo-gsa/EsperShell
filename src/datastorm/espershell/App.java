@@ -33,6 +33,8 @@ public class App {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String line = "";
         String command = "";
+        printHeaderShell();
+        
         System.out.print(">");
 
 
@@ -98,6 +100,10 @@ public class App {
                 case "dontPrintToTerminal" :
                     dontPrintToTerminal_commandHandler(esper,command.split("\\s+", 2));
                     break;
+                case "help": //all available commands
+                    help_commandHandler();
+                    break;
+                    
                     
                 default:
                     System.out.println("\'" + tokens[0] + "\'" + " is not recognized as a command.");
@@ -235,4 +241,20 @@ public class App {
         System.out.println("\n"+countDroppedQueries+" queries were dropped.\n");
     }
 
+    private static void printHeaderShell(){
+        System.out.println("\n-----------------------------------------------");
+        System.out.println("-     1st Data Storm Big Data Summer School   -");
+        System.out.println("-        Streaming Data Hands-On Lab          -");
+        System.out.println("-----------------------------------------------");
+        System.out.println("\nType \"help;\" for available commands.\n");
+    }
+    
+    private static void help_commandHandler(){
+        System.out.println("------------- Available commands -------------");
+        System.out.println("add query_statement;\n\tInstall query given by the <query_statement> in Esper query engine.\n");
+        System.out.println("send (meterId,timestamp,measure);\n\tSend into Esper query engine the event represented by (deviceId,timestamp,measure).");
+        
+        
+    }
+    
 }
