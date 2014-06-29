@@ -12,19 +12,19 @@ import com.espertech.esper.epl.core.EngineImportService;
  * @author Diogo Anjos (diogo.silva.anjos@tecnico.ulisboa.pt)
  */
 
+//------------------------------------
+//TODO bugs to solve:
+//TODO shell aceita (e não devia) query correcta + \n + lixo 
+//-----------------------------------
+
+
+
 public class App {
 
 
     public static void main(String[] args) {
         EsperEngine esper = new EsperEngine();
-
-//      DeviceApi modbusDriver = new ModbusDriver();
         ModbusDriver modbusDriver = new ModbusDriver();
-        
-//        ***DEPRECATED***
-//        startDataAcquisitionThread(esper);
-        
-        
         
         
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -231,17 +231,4 @@ public class App {
         System.out.println("\n"+countDroppedQueries+" queries were dropped.\n");
     }
 
-    
-//    ***DEPRECATED***
-//    private static void startDataAcquisitionThread(EsperEngine esper){
-//        Thread dataAquisitionThead = new Thread(new DataAcquisitionDriver(esper));
-//        dataAquisitionThead.start();
-//    }
-    
-    
-    //------------------------------------
-    //TODO bugs to solve:
-    //TODO shell aceita ( e não devia) query correcta + \n + lixo 
-    //-----------------------------------
-    
 }

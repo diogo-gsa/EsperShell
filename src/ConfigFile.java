@@ -19,7 +19,7 @@ public class ConfigFile {
         StringBuilder sb = new StringBuilder();
         String filename = "modbusDriver.config";
         try {
-            System.out.println("[DEBUG]Looking for file "+filename+" here: "+ System.getProperty("user.dir")); //TODO DEBUG 
+//            System.out.println("[DEBUG]Looking for file "+filename+" here: "+ System.getProperty("user.dir")); //TODO DEBUG 
             br = new BufferedReader(new FileReader(filename));
             String line = br.readLine();
             while (line != null) {

@@ -25,6 +25,13 @@ public class Poller {
         isStarted = true;
         (new ExpiredEventsPollerThread()).start();
     }
+    
+    public void configPoller(){
+        Map<String,Long> pollerSettings = (new ConfigFile()).getSettings(); 
+        for(String deviceID : pollerSettings.keySet()){
+            this.addAddress(deviceID, pollerSettings.get(deviceID));
+        }
+    }
 
     public void start() {
         isStarted = true;
@@ -61,6 +68,7 @@ public class Poller {
     public synchronized String getNext() {
         return readyToUseEventsQueue.poll();
     }
+    
 
     /* 
      * This thread looks for new available events, spinning around delayedEventsQueue.

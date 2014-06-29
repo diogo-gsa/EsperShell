@@ -30,7 +30,7 @@ public class ModbusDriver /* implements DeviceAPI */ {
         metersReadyToBeReaded = new LinkedBlockingQueue<String>();
         
         poller = new Poller();
-        configPoller();
+        poller.configPoller();
 
         (new PollerReaderThread()).start();
         (new ReadModbusmasterThread()).start();
@@ -102,13 +102,5 @@ public class ModbusDriver /* implements DeviceAPI */ {
             }
         }
     }
-    
-    private void configPoller(){
-        Map<String,Long> pollerSettings = (new ConfigFile()).getSettings(); 
-        for(String deviceID : pollerSettings.keySet()){
-            poller.addAddress(deviceID, pollerSettings.get(deviceID));
-        }
-    }
-    
     
 }
