@@ -60,7 +60,7 @@ public class ModbusDriver /* implements DeviceAPI */ {
     }
     
     
-    
+    //TODO Acabar de implementar isto
     private class ReadModbusmasterThread extends Thread{
         public ReadModbusmasterThread() {
             super("READ_MODBUSMASTER_THREAD");
