@@ -54,6 +54,7 @@ public class ModbusDriver
 
         poller = new Poller();
         poller.configPoller();
+        poller.start();
 
         (new PollerReaderThread()).start();
         (new ReadModbusmasterThread()).start();

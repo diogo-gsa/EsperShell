@@ -1,10 +1,9 @@
 package datastorm.espershell.esperengine;
 
-
-
-
-
-
+import ist.smartoffice.datapointconnectivity.DatapointAddress;
+import ist.smartoffice.datapointconnectivity.DatapointValue;
+import ist.smartoffice.datapointconnectivity.IDatapointConnectivityService;
+import ist.smartoffice.datapointconnectivity.IDatapointConnectivityService.ErrorType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,15 +19,12 @@ import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
 import com.espertech.esper.client.EPStatementException;
 
-
-
-
 /*
  * @author Diogo Anjos (diogo.silva.anjos@tecnico.ulisboa.pt)
  * 
  */
 
-public class EsperEngine {
+public class EsperEngine implements IDatapointConnectivityService.DatapointListener {
 
     EPServiceProvider   esperEngine;
     EPRuntime           engineRuntime;
@@ -172,6 +168,31 @@ public class EsperEngine {
             System.out.println(queryCatalog.get(queryId));
             System.out.println("-------------------------------------------");            
         }        
+    }
+
+    @Override
+    public void onDatapointUpdate(DatapointAddress address, DatapointValue[] values) {
+        String meterId = address.getAddress();
+        double measure = 0;
+        long ts = 0;
+        for(DatapointValue dv : values){
+            measure = measure + Double.parseDouble(dv.getValue());
+            ts = dv.getTimestamp();
+        }
+        push(new Measure(meterId, ts, measure));
+    }
+
+    @Override
+    public void onDatapointError(DatapointAddress address, ErrorType error) {
+        System.out.println("Error "+error+" found with datapoint "+address);
+    }
+
+    @Override
+    public void onDatapointAddressListChanged(DatapointAddress[] address) {
+        System.out.println("Datapoint address list changed for:\n");
+        for(DatapointAddress da : address){
+            System.out.println(""+da.getAddress());
+        }
     }
 
 }

@@ -14,19 +14,11 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class Poller {
-
-    private Map<String, Delayed> delayedEventsMap;
-    private DelayQueue<Delayed> delayedEventsQueue;
-    private Queue<String> readyToUseEventsQueue;
-    private boolean isStarted;
-
-    public Poller() {
-        delayedEventsQueue = new DelayQueue<>();
-        readyToUseEventsQueue = new LinkedList<>();
-        delayedEventsMap = new TreeMap<String, Delayed>();
-        isStarted = true;
-        (new ExpiredEventsPollerThread()).start();
-    }
+    private static final String POLLER_THREAD_NAME = "Poller expired events ehread";
+    private final Map<String, Delayed> delayedEventsMap = new TreeMap<String, Delayed>();
+    private final DelayQueue<Delayed> delayedEventsQueue = new DelayQueue<>();
+    private final Queue<String> readyToUseEventsQueue = new LinkedList<>();
+    private final ExpiredEventsPollerThread pollerThread = new ExpiredEventsPollerThread();     
     
     public void configPoller(){
         Map<String,Long> pollerSettings = (new ConfigFile()).getSettings(); 
@@ -36,11 +28,11 @@ public class Poller {
     }
 
     public void start() {
-        isStarted = true;
+        pollerThread.start();
     }
 
     public void stop() {
-        isStarted = false;
+        pollerThread.interrupt();
     }
 
     public synchronized void addAddress(String message, long milisecondsDelay) {
@@ -79,7 +71,7 @@ public class Poller {
      */
     private class ExpiredEventsPollerThread extends Thread {
         public ExpiredEventsPollerThread() {
-            super("EXPIRED_EVENTS_POLLER_THREAD");
+            super(POLLER_THREAD_NAME);
         }
         
         @Override
@@ -88,9 +80,7 @@ public class Poller {
                 synchronized (Poller.this) {
                     DelayedEvent element = (DelayedEvent) delayedEventsQueue.poll();
                     if (element != null) {
-                        if (isStarted) {
-                            readyToUseEventsQueue.add(element.getMessage());
-                        }
+                        readyToUseEventsQueue.add(element.getMessage());
                         // reschedule the event in the delayQueue
                         addAddress(element.getMessage(), element.getInitialExpirationDelay());
                     }
