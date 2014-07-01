@@ -1,4 +1,6 @@
 package datastorm.espershell;
+import ist.smartoffice.datapointconnectivity.IDatapointConnectivityService;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,7 +29,8 @@ public class App {
 
     public static void main(String[] args) {
         EsperEngine esper = new EsperEngine();
-        ModbusDriver modbusDriver = new ModbusDriver();
+        IDatapointConnectivityService modbusDriver = new ModbusDriver();
+        modbusDriver.addDatapointListener(esper);
         
         
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
