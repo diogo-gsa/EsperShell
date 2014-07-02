@@ -64,12 +64,13 @@ public class EsperEngine implements IDatapointConnectivityService.DatapointListe
         
         //get queryID
         countInitializedQueries++;        
+
+        QueryMetadata qmd = new QueryMetadata(countInitializedQueries, eplQueryExpression, queryEngineObject);
         
         //create new listener
-        QueryListener listener = new QueryListener(countInitializedQueries);
+        QueryListener listener = new QueryListener(qmd);
         queryEngineObject.addListener(listener);
             
-        QueryMetadata qmd = new QueryMetadata(countInitializedQueries, eplQueryExpression, queryEngineObject);
         queryCatalog.put(qmd.getQueryID(), qmd);
         
         return qmd;
