@@ -38,22 +38,24 @@ public class ModbusDriver
     //Atributes related with IDatapointConnectivityService methods implementation 
     private Set<DatapointListener> listeners;
     private Map<DatapointAddress, DatapointMetadata> datapoints;
-
+    private ConfigFile configFile;
+    
 
 
     public ModbusDriver() {
         master = new ModbusMasterLib();
         configModbusMaster("127.0.0.1", 1, 3);
 
+        configFile = new ConfigFile();
+        configFile.readConfigFile("modbusDriver.config");
+        
         metersReadyToBeReaded = new LinkedBlockingQueue<String>();
        
         listeners = new HashSet<DatapointListener>();
-        //TODO: inicialização de datapoints deve ser feita por ficheiro
-        // exemplo: datapoints = MeterIPServiceConfig.loadDatapointsConfigs();
-        datapoints = new TreeMap<DatapointAddress, DatapointMetadata>(); //TODO <----------------- ISTO TEM DE SER ALTERADO
+        datapoints = configFile.getModbusDriverSettings();
 
         poller = new Poller();
-        poller.configPoller();
+        poller.configPoller(configFile);
         poller.start();
 
         (new PollerReaderThread()).start();
@@ -77,14 +79,11 @@ public class ModbusDriver
         try {
             return master.readInputRegisters(slaveId, modbusOffsetRegisters, modbusLengthRegisters);
         } catch (ModbusResponseException | ModbusCommunicationException e) {
-            //System.out.println("Error: Communication between modbus master and slave failed"); //TODO apagar isto de implementar a classe ReadModbusmasterThread
-            //e.printStackTrace(); //TODO
+            System.out.println("Error: Communication between modbus master and slave failed");
             return null;
         }
     }
-
-
-    //TODO Acabar de implementar isto
+    
     private class ReadModbusmasterThread extends
             Thread {
         public ReadModbusmasterThread() {
@@ -106,21 +105,12 @@ public class ModbusDriver
                         }
                     }
                     String meterReadingAddr = dpToReadMD.getReadDatapointAddress();
-                    short[] results = readEnergyMeter(17/*meterReadingAddr*/); //TODO fix this
+                    short[] results = readEnergyMeter(Integer.parseInt( meterReadingAddr));
                     DatapointValue[] resultsToSend = new DatapointValue[results.length];
                     for(int i = 0; i < resultsToSend.length; i++){
                         resultsToSend[i] = new DatapointValue(results[i]+"");
                     }
                     notifyDatapointUpdate(dpToReadAddr,resultsToSend);
-                    
-                    /*//System.out.println("MeterToRead: "+meterToRead); //TODO  DEBUG
-                    //TODO(1) converter meterToRead:String para param:int do metodo readEnergyMeter  
-                    short[] result = readEnergyMeter(17); // 17 is a stub value
-                    if (result != null) {
-                        //TODO(2) from  result[1,2,3] compute de total amount of consumed energy
-                        //TODO(3) send this value to Esper via DEVICE API
-                    
-                    }*/
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

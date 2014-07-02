@@ -20,10 +20,10 @@ public class Poller {
     private final Queue<String> readyToUseEventsQueue = new LinkedList<>();
     private final ExpiredEventsPollerThread pollerThread = new ExpiredEventsPollerThread();     
     
-    public void configPoller(){
-        Map<String,Long> pollerSettings = (new ConfigFile()).getSettings(); 
+    public void configPoller(ConfigFile config){
+        Map<String,Long> pollerSettings = config.getPollerSettings(); 
         for(String deviceID : pollerSettings.keySet()){
-            this.addAddress(deviceID, pollerSettings.get(deviceID));
+            addAddress(deviceID, pollerSettings.get(deviceID));
         }
     }
 

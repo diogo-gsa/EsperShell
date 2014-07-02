@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="C:/Tecnico/MScThesis/mainDeliverables/MScDissertation/eclipse-jee-kepler-SR2/workspace/EsperShell/libs/esper-5.0.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/lumina.extensions.modbus.master"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ist.smartoffice.datapointconnectivity"/>
+	<classpathentry kind="lib" path="C:/Tecnico/MScThesis/mainDeliverables/MScDissertation/eclipse-jee-kepler-SR2/workspace/EsperShell/libs/json-simple-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
