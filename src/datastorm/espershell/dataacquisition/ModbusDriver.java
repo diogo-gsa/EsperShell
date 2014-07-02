@@ -76,7 +76,7 @@ public class ModbusDriver
 
 
     private short[] readEnergyMeter(int slaveId) {
-        /*//TODO codigo correcto
+        /*//TODO codigo correcto------------------------------------------------------------------------------------
         try {
             return master.readInputRegisters(slaveId, modbusOffsetRegisters, modbusLengthRegisters);
         } catch (ModbusResponseException | ModbusCommunicationException e) {

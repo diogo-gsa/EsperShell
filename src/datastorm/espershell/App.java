@@ -254,12 +254,24 @@ public class App {
         System.out.println("\nType \"help;\" for available commands.\n");
     }
     
+        
     private static void help_commandHandler(){
         System.out.println("------------- Available commands -------------");
-        System.out.println("add query_statement;\n\tInstall query given by the <query_statement> in Esper query engine.\n");
-        System.out.println("send (meterId,timestamp,measure);\n\tSend into Esper query engine the event represented by (deviceId,timestamp,measure).");
-        
+        System.out.println("add query_statement;\n\tInstall the query stated by <query_statement> in Esper, associating it with an Id.");
+        System.out.println("send (meterId,timestamp,measure);\n\tSend the event (deviceId,timestamp,measure) into Esper query engine.");
+        System.out.println("list;\n\t List the queries installed in Esper.");
+        System.out.println("turnOn query_id;\n\t Turn ON the query associated with the id <query_id>.");
+        System.out.println("turnOff query_id;\n\t Turn OFF the query associated with the id <query_id>.");
+        System.out.println("drop query_id;\n\t Remove from Esper the query associated with the id <query_id>.");
+        System.out.println("dropAll query_id;\n\t Remove all the queries previously installed in Esper.");
+        System.out.println("printToFile query_id;\n\t Set the query related with <query_id> to print their output into file <query_id>output.txt");
+        System.out.println("dontPrintToFile query_id;\n\t Set the query related with <query_id> to Do Not print their output into file <query_id>output.txt");
+        System.out.println("printToTerminal query_id;\n\t Set the query related with <query_id> to print their output to this terminal.");
+        System.out.println("dontPrintToFile query_id;\n\t Set the query related with <query_id> to Do Not print their output to this terminal.");
+        System.out.println("showInput;\n\t Print in terminal all events that are being sent by the sensors.");
+        System.out.println("dontShowInput;\n\t Don't print in terminal the events that are being sent by the sensors.");
+        System.out.println("runScript <file_name.script>;\n\t Run the script file with name <file_name.script>.");
+        System.out.println("----------------------------------------------\n");        
         
     }
-    
 }
