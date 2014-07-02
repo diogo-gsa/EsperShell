@@ -108,7 +108,12 @@ public class App {
                 case "help": //all available commands
                     help_commandHandler();
                     break;
-                    
+                case "showInput": //list installed queries and their state (des/activated)
+                    showInput_commandHandler(esper);
+                    break;
+                case "dontShowInput": //list installed queries and their state (des/activated)
+                    dontShowInput_commandHandler(esper);
+                    break;    
                     
                 default:
                     System.out.println("\'" + tokens[0] + "\'" + " is not recognized as a command.");
@@ -245,7 +250,17 @@ public class App {
         int countDroppedQueries = esper.dropAllQueries();
         System.out.println("\n"+countDroppedQueries+" queries were dropped.\n");
     }
-
+    
+    private static void showInput_commandHandler(EsperEngine esper) {
+        esper.setShowInput(true);        
+        System.out.println("\n Arriving events will be printed in terminal.\n");
+    }
+    
+    private static void dontShowInput_commandHandler(EsperEngine esper) {
+        esper.setShowInput(false);
+        System.out.println("\n Arriving events will Not be printed in terminal.\n");        
+    }
+    
     private static void printHeaderShell(){
         System.out.println("\n-----------------------------------------------");
         System.out.println("-     1st Data Storm Big Data Summer School   -");

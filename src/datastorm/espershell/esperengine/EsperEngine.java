@@ -32,24 +32,27 @@ public class EsperEngine implements IDatapointConnectivityService.DatapointListe
     
     Map<Integer,QueryMetadata> queryCatalog; 
     int countInitializedQueries;
+    private boolean showInput;
     
     
     public EsperEngine(){
         esperEngine = EPServiceProviderManager.getDefaultProvider();
         engineRuntime = esperEngine.getEPRuntime();
         engineAdmin = esperEngine.getEPAdministrator();
-
+        showInput = true;
+        
         queryCatalog = new TreeMap<Integer,QueryMetadata>(); 
         countInitializedQueries = 0;
         
     }
        
-    public void push(Measure event){
-        if(countInitializedQueries == 0){
-            System.out.println("*** There is no initialized queries at the engine ***");
+    public void push(Measure event){        
+        if(showInput){
+            System.out.println("Input:\t"+event);
+            if(countInitializedQueries == 0){
+                System.out.println("*** There is no initialized queries at the engine ***");
+            }
         }
-            
-        System.out.println("Input:\t"+event);        
         engineRuntime.sendEvent(event);
     }
     
@@ -133,8 +136,6 @@ public class EsperEngine implements IDatapointConnectivityService.DatapointListe
     }
     
     
-    
-    
     public boolean dropQuery(int queryID){
         try{ 
             queryCatalog.get(queryID).destroyQuery();
@@ -170,6 +171,10 @@ public class EsperEngine implements IDatapointConnectivityService.DatapointListe
         }        
     }
 
+    public void setShowInput(boolean state){
+        showInput = state;
+    }
+    
     @Override
     public void onDatapointUpdate(DatapointAddress address, DatapointValue[] values) {
         String meterId = address.getAddress();

@@ -85,7 +85,7 @@ public class ModbusDriver
         }*/
         
       //TODO codigo de teste "stub"
-        System.out.println("ReadedSlaveID: "+slaveId);
+//        System.out.println("ReadedSlaveID: "+slaveId);
         short[] res = {(short) (1+slaveId), (short) (2+slaveId),(short) (3+slaveId)};
         return res;
     }
