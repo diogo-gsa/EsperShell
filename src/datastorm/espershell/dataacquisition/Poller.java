@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class Poller {
-    private static final String POLLER_THREAD_NAME = "Poller expired events ehread";
+    private static final String POLLER_THREAD_NAME = "Poller expired events thread";
     private final Map<String, Delayed> delayedEventsMap = new TreeMap<String, Delayed>();
     private final DelayQueue<Delayed> delayedEventsQueue = new DelayQueue<>();
     private final Queue<String> readyToUseEventsQueue = new LinkedList<>();
