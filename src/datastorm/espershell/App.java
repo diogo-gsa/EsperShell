@@ -293,6 +293,7 @@ public class App {
         System.out.println("showInput;\n\t Print in terminal all events that are being sent by the sensors.");
         System.out.println("dontShowInput;\n\t Don't print in terminal the events that are being sent by the sensors.");
         System.out.println("runScript <file_name.script>;\n\t Run the script file with name <file_name.script>.");
+        System.out.println("loadConfig;\n\t Reload the configuration file modbusDriver.Config");
         System.out.println("----------------------------------------------\n");        
         
     }
