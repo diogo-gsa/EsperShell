@@ -34,6 +34,10 @@ public class Poller {
     public void stop() {
         pollerThread.interrupt();
     }
+    
+    public void destroy(){
+        pollerThread.stopThread();   
+    }
 
     public synchronized void addAddress(String message, long milisecondsDelay) {
         Delayed newDelayedEvent = new DelayedEvent(message, milisecondsDelay);
@@ -70,13 +74,21 @@ public class Poller {
      *  and then rescheduled (again) in the delayedEventsQueue.
      */
     private class ExpiredEventsPollerThread extends Thread {
+        
+        private boolean keepRunning;
+        
         public ExpiredEventsPollerThread() {
             super(POLLER_THREAD_NAME);
+            keepRunning = true;
+        }
+        
+        public void stopThread(){
+            keepRunning = false;
         }
         
         @Override
         public void run() {
-            while (true) {
+            while (keepRunning) {
                 synchronized (Poller.this) {
                     DelayedEvent element = (DelayedEvent) delayedEventsQueue.poll();
                     if (element != null) {

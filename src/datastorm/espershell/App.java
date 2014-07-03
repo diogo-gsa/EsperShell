@@ -33,8 +33,6 @@ public class App {
         modbusDriver.addDatapointListener(esper);
         
         
-        
-        
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String line = "";
         String command = "";
@@ -51,7 +49,7 @@ public class App {
                     if (command.equals("exit;")) {
                         return;
                     }
-                    dispatchCommand(command, esper);
+                    dispatchCommand(command, esper, modbusDriver);
                     line = "";
                     command = "";
                     System.out.print(">");
@@ -65,7 +63,7 @@ public class App {
         }
     }
 
-    private static void dispatchCommand(String command, EsperEngine esper) {
+    private static void dispatchCommand(String command, EsperEngine esper, IDatapointConnectivityService modbusDriver) {
         // add select * from stream => ['add','add select * from stream']
         String[] tokens = command.split("\\W+", 2);
 
@@ -114,6 +112,9 @@ public class App {
                 case "dontShowInput": //list installed queries and their state (des/activated)
                     dontShowInput_commandHandler(esper);
                     break;    
+                case "loadConfig": //list installed queries and their state (des/activated)
+                    reloadConfig_commandHandler(modbusDriver);
+                    break;
                     
                 default:
                     System.out.println("\'" + tokens[0] + "\'" + " is not recognized as a command.");
@@ -260,6 +261,13 @@ public class App {
         esper.setShowInput(false);
         System.out.println("\n Arriving events will Not be printed in terminal.\n");        
     }
+    
+    private static void reloadConfig_commandHandler(IDatapointConnectivityService modbusDriver){
+        System.out.println("---1");
+        modbusDriver.requestDatapointWrite(null, null, null);
+        System.out.println("\n Config file has been reloaded.\n");
+    }
+    
     
     private static void printHeaderShell(){
         System.out.println("\n-----------------------------------------------");

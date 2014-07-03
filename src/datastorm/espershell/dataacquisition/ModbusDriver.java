@@ -33,13 +33,15 @@ public class ModbusDriver
     int modbusLengthRegisters; // number of modbus packet registers that we want to read (3 = tri-phase consumption)
 
     Poller poller;
-    BlockingQueue<String> metersReadyToBeReaded; //receive events sent by poller
+    BlockingQueue<String> metersReadyToBeReaded; //receive events sent by poller (is thread safe)
 
     //Atributes related with IDatapointConnectivityService methods implementation 
     private Set<DatapointListener> listeners;
     private Map<DatapointAddress, DatapointMetadata> datapoints;
     private ConfigFile configFile;
-    
+
+    PollerReaderThread pollerThread;
+    ReadModbusmasterThread modbusMasterThread;
 
 
     public ModbusDriver() {
@@ -48,9 +50,9 @@ public class ModbusDriver
 
         configFile = new ConfigFile();
         configFile.readConfigFile("modbusDriver.config");
-        
+
         metersReadyToBeReaded = new LinkedBlockingQueue<String>();
-       
+
         listeners = new HashSet<DatapointListener>();
         datapoints = configFile.getModbusDriverSettings();
 
@@ -58,10 +60,58 @@ public class ModbusDriver
         poller.configPoller(configFile);
         poller.start();
 
-        (new PollerReaderThread()).start();
-        (new ReadModbusmasterThread()).start();
+
+        pollerThread = new PollerReaderThread();
+        pollerThread.start();
+        
+        modbusMasterThread = new ReadModbusmasterThread();
+        modbusMasterThread.start();
+        
+    
     }
 
+    private void reloadConfig(){
+        //TODO TESTAR ISTO
+        //destruir tudo
+        pollerThread.stopThread();
+        pollerThread = null;
+        modbusMasterThread.stopThread();
+        modbusMasterThread = null;
+        poller.destroy();
+        poller = null;
+        metersReadyToBeReaded.clear();
+        metersReadyToBeReaded = null;
+        datapoints.clear();
+        datapoints = null;
+        
+        //construir tudo
+        configFile = new ConfigFile();
+        configFile.readConfigFile("modbusDriver.config");
+        metersReadyToBeReaded = new LinkedBlockingQueue<String>();
+        datapoints = configFile.getModbusDriverSettings();
+        poller = new Poller();
+        poller.configPoller(configFile);
+        poller.start();
+        pollerThread = new PollerReaderThread();
+        pollerThread.start();
+        modbusMasterThread = new ReadModbusmasterThread();
+        modbusMasterThread.start();
+
+        //--------------------------------------------------
+        /*configFile = new ConfigFile();
+        System.out.println("--3");
+        configFile.readConfigFile("modbusDriver.config");
+        System.out.println("--4");
+        synchronized (datapoints) {
+            datapoints = configFile.getModbusDriverSettings();
+        }
+        poller.stop();
+        poller = new Poller();
+        poller.configPoller(configFile);
+        poller.start();*/
+    }
+    
+    
     private void configModbusMaster(String address, int offset, int length) {
         try {
             this.modbusOffsetRegisters = offset;
@@ -76,63 +126,85 @@ public class ModbusDriver
 
 
     private short[] readEnergyMeter(int slaveId) {
-        /*//TODO codigo correcto------------------------------------------------------------------------------------
-        try {
-            return master.readInputRegisters(slaveId, modbusOffsetRegisters, modbusLengthRegisters);
-        } catch (ModbusResponseException | ModbusCommunicationException e) {
-            System.out.println("Error: Communication between modbus master and slave failed");
-            return null;
-        }*/
-        
-      //TODO codigo de teste "stub"
-//        System.out.println("ReadedSlaveID: "+slaveId);
-        short[] res = {(short) (1+slaveId), (short) (2+slaveId),(short) (3+slaveId)};
+        /*
+         * //TODO codigo
+         * correcto----------------------------------------------------------
+         * -------------------------- try { return master.readInputRegisters(slaveId,
+         * modbusOffsetRegisters, modbusLengthRegisters); } catch (ModbusResponseException
+         * | ModbusCommunicationException e) {
+         * System.out.println("Error: Communication between modbus master and slave failed"
+         * ); return null; }
+         */
+
+        //TODO codigo de teste "stub"
+        //        System.out.println("ReadedSlaveID: "+slaveId);
+        short[] res = { (short) (1 + slaveId), (short) (2 + slaveId), (short) (3 + slaveId) };
         return res;
     }
-    
+
     private class ReadModbusmasterThread extends
             Thread {
+        
+        private boolean keepRunning;
+        
         public ReadModbusmasterThread() {
             super("READ_MODBUSMASTER_THREAD");
+            keepRunning = true;
         }
 
+        public void stopThread(){
+            keepRunning = false;
+        }
+        
         @Override
         public void run() {
-            while (true) {
-                try {
-                    String meterToReadToken = metersReadyToBeReaded.take(); // e.g. PavCivil
-                    DatapointMetadata dpToReadMD = null;
-                    DatapointAddress dpToReadAddr = null;
-                    for(DatapointAddress da : datapoints.keySet()){
-                        if(da.getAddress().equals(meterToReadToken)){
-                            dpToReadMD = datapoints.get(da);
-                            dpToReadAddr = da;
-                            break;
+            while (keepRunning) {
+                    try {
+                        String meterToReadToken = metersReadyToBeReaded.take(); // e.g. PavCivil
+                        DatapointMetadata dpToReadMD = null;
+                        DatapointAddress dpToReadAddr = null;
+                        synchronized (datapoints) {
+                            for (DatapointAddress da : datapoints.keySet()) {
+                                if (da.getAddress().equals(meterToReadToken)) {
+                                    dpToReadMD = datapoints.get(da);
+                                    dpToReadAddr = da;
+                                    break;
+                                }
+                            }
                         }
+                        String meterReadingAddr = dpToReadMD.getReadDatapointAddress();
+                        short[] results = readEnergyMeter(Integer.parseInt(meterReadingAddr));
+                        DatapointValue[] resultsToSend = new DatapointValue[results.length];
+                        for (int i = 0; i < resultsToSend.length; i++) {
+                            resultsToSend[i] = new DatapointValue(results[i] + "", 0); //TODO FIX nao vai existir timestamp 
+                        }
+                        notifyDatapointUpdate(dpToReadAddr, resultsToSend);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    String meterReadingAddr = dpToReadMD.getReadDatapointAddress();
-                    short[] results = readEnergyMeter(Integer.parseInt( meterReadingAddr));
-                    DatapointValue[] resultsToSend = new DatapointValue[results.length];
-                    for(int i = 0; i < resultsToSend.length; i++){
-                        resultsToSend[i] = new DatapointValue(results[i]+"", 0); //TODO FIX nao vai existir timestamp 
-                    }
-                    notifyDatapointUpdate(dpToReadAddr,resultsToSend);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
         }
     }
 
     private class PollerReaderThread extends
             Thread {
+        
+        private boolean keepRunning;
+        
         public PollerReaderThread() {
             super("POLLER_READER_THREAD");
+            keepRunning = true;
         }
+        
+        
+        public void stopThread(){
+            keepRunning = false;
+        }
+        
 
         @Override
         public void run() {
-            while (true) {
+            while (keepRunning) {
                 String value = poller.getNext();
                 try {
                     if (value != null) {
@@ -203,7 +275,11 @@ public class ModbusDriver
     public int requestDatapointWrite(DatapointAddress address,
                                      DatapointValue[] values,
                                      WriteCallback writeCallback) {
-        // TODO Sensores modbus nao suportam escrita. este metodo nao se implementa certo?
+        // Very, Very Bad!
+        if(address == null && values == null && writeCallback == null){
+            System.out.println("---2");
+            reloadConfig();// reread config file and reload new configurations
+        }
         return 0;
     }
 
