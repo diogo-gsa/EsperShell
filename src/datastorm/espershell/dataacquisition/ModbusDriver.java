@@ -71,20 +71,14 @@ public class ModbusDriver
     }
 
     private void reloadConfig(){
-        //TODO TESTAR ISTO
-        //destruir tudo
+        //drop old structures
         pollerThread.stopThread();
-        pollerThread = null;
         modbusMasterThread.stopThread();
-        modbusMasterThread = null;
         poller.destroy();
-        poller = null;
         metersReadyToBeReaded.clear();
-        metersReadyToBeReaded = null;
         datapoints.clear();
-        datapoints = null;
         
-        //construir tudo
+        //build new structures
         configFile = new ConfigFile();
         configFile.readConfigFile("modbusDriver.config");
         metersReadyToBeReaded = new LinkedBlockingQueue<String>();
@@ -96,19 +90,6 @@ public class ModbusDriver
         pollerThread.start();
         modbusMasterThread = new ReadModbusmasterThread();
         modbusMasterThread.start();
-
-        //--------------------------------------------------
-        /*configFile = new ConfigFile();
-        System.out.println("--3");
-        configFile.readConfigFile("modbusDriver.config");
-        System.out.println("--4");
-        synchronized (datapoints) {
-            datapoints = configFile.getModbusDriverSettings();
-        }
-        poller.stop();
-        poller = new Poller();
-        poller.configPoller(configFile);
-        poller.start();*/
     }
     
     
@@ -277,7 +258,6 @@ public class ModbusDriver
                                      WriteCallback writeCallback) {
         // Very, Very Bad!
         if(address == null && values == null && writeCallback == null){
-            System.out.println("---2");
             reloadConfig();// reread config file and reload new configurations
         }
         return 0;

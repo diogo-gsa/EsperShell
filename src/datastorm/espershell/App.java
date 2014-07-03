@@ -263,7 +263,6 @@ public class App {
     }
     
     private static void reloadConfig_commandHandler(IDatapointConnectivityService modbusDriver){
-        System.out.println("---1");
         modbusDriver.requestDatapointWrite(null, null, null);
         System.out.println("\n Config file has been reloaded.\n");
     }
