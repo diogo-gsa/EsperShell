@@ -114,7 +114,7 @@ public class ModbusDriver
                     short[] results = readEnergyMeter(Integer.parseInt( meterReadingAddr));
                     DatapointValue[] resultsToSend = new DatapointValue[results.length];
                     for(int i = 0; i < resultsToSend.length; i++){
-                        resultsToSend[i] = new DatapointValue(results[i]+"");
+                        resultsToSend[i] = new DatapointValue(results[i]+"", 0); //TODO FIX nao vai existir timestamp 
                     }
                     notifyDatapointUpdate(dpToReadAddr,resultsToSend);
                 } catch (Exception e) {
