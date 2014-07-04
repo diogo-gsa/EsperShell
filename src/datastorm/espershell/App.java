@@ -115,6 +115,9 @@ public class App {
                 case "loadConfig": //list installed queries and their state (des/activated)
                     reloadConfig_commandHandler(modbusDriver);
                     break;
+                case "runScript": //list installed queries and their state (des/activated)
+                    runScript_commandHandler(tokens, command, esper, modbusDriver);
+                    break;
                     
                 default:
                     System.out.println("\'" + tokens[0] + "\'" + " is not recognized as a command.");
@@ -275,8 +278,8 @@ public class App {
         System.out.println("-----------------------------------------------");
         System.out.println("\nType \"help;\" for available commands.\n");
     }
+
     
-        
     private static void help_commandHandler(){
         System.out.println("------------- Available commands -------------");
         System.out.println("add query_statement;\n\tInstall the query stated by <query_statement> in Esper, associating it with an Id.");
@@ -294,7 +297,13 @@ public class App {
         System.out.println("dontShowInput;\n\t Don't print in terminal the events that are being sent by the sensors.");
         System.out.println("runScript <file_name.script>;\n\t Run the script file with name <file_name.script>.");
         System.out.println("loadConfig;\n\t Reload the configuration file modbusDriver.Config");
+        System.out.println("exit;\n\t Terminate the program");
         System.out.println("----------------------------------------------\n");        
-        
     }
+
+    private static void runScript_commandHandler(String[] tokens, String command, EsperEngine esper, IDatapointConnectivityService modbusDriver){
+        
+        System.out.println("Not yet implemented: "+tokens[1]);
+    }
+    
 }

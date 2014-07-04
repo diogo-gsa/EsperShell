@@ -107,20 +107,26 @@ public class ModbusDriver
 
 
     private short[] readEnergyMeter(int slaveId) {
-        /*
-         * //TODO codigo
-         * correcto----------------------------------------------------------
-         * -------------------------- try { return master.readInputRegisters(slaveId,
-         * modbusOffsetRegisters, modbusLengthRegisters); } catch (ModbusResponseException
-         * | ModbusCommunicationException e) {
-         * System.out.println("Error: Communication between modbus master and slave failed"
-         * ); return null; }
-         */
+        
+          //TODO codigo correcto
+          try { 
+              short[] res = master.readInputRegisters(slaveId, modbusOffsetRegisters, modbusLengthRegisters);
+              System.out.println("ArraySize:"+res.length+" ={"+res[0]+","+res[1]+","+res[2]+"}");
+              
+              return res; 
+          } catch (ModbusResponseException e)  {
+              System.out.println("Error: Communication between modbus master and slave failed"); 
+              return null; 
+          } catch (ModbusCommunicationException e) {
+              System.out.println("Error: Communication between modbus master and slave failed"); 
+              return null; 
+          }
+         
 
         //TODO codigo de teste "stub"
         //        System.out.println("ReadedSlaveID: "+slaveId);
-        short[] res = { (short) (1 + slaveId), (short) (2 + slaveId), (short) (3 + slaveId) };
-        return res;
+//        short[] res = { (short) (1 + slaveId), (short) (2 + slaveId), (short) (3 + slaveId) };
+//        return res;
     }
 
     private class ReadModbusmasterThread extends
