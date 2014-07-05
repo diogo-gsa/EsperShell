@@ -38,8 +38,8 @@ public class ModbusDriver
     //Atributes related with IDatapointConnectivityService methods implementation 
     private Set<DatapointListener> listeners;
     private Map<DatapointAddress, DatapointMetadata> datapoints;
-    private final String __MODBUS_CONFIG_FILE_NAME__ = "modbusDriverConf.json";
-    //private final String __MODBUS_CONFIG_FILE_NAME__ = "../modbusDriverConf.json"; 
+    //private final String __MODBUS_CONFIG_FILE_NAME__ = "modbusDriverConf.json";
+    private final String __MODBUS_CONFIG_FILE_NAME__ = "../modbusDriverConf.json"; //procurar na dir acima
     private ConfigFile configFile;
 
     PollerReaderThread pollerThread;
