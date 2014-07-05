@@ -163,7 +163,7 @@ public class App {
             System.out.println("Error: Malformed input around (" + event + ")");
             return;
         }
-        esper.push(new Measure(deviceID, ts, value));
+        esper.push(new Measure(deviceID, /*ts, */value));
     }
 
     private static void list_commandHandler(EsperEngine esper) {

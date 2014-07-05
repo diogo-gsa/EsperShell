@@ -188,12 +188,12 @@ public class EsperEngine implements IDatapointConnectivityService.DatapointListe
     public void onDatapointUpdate(DatapointAddress address, DatapointValue[] values) {
         String meterId = address.getAddress();
         double measure = 0;
-        long ts = 0;
+//        long ts = 0;
         for(DatapointValue dv : values){
             measure = measure + Double.parseDouble(dv.getValue());
-            ts = dv.getTimestamp();
+//            ts = dv.getTimestamp();
         }
-        push(new Measure(meterId, ts, measure));
+        push(new Measure(meterId,/* ts,*/ measure));
     }
 
     @Override
