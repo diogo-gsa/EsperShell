@@ -33,6 +33,7 @@ public class EsperEngine implements IDatapointConnectivityService.DatapointListe
     Map<Integer,QueryMetadata> queryCatalog; 
     int countInitializedQueries;
     private boolean showInput;
+    MonitorClient inputMonitor;
     
     
     public EsperEngine(){
@@ -40,6 +41,7 @@ public class EsperEngine implements IDatapointConnectivityService.DatapointListe
         engineRuntime = esperEngine.getEPRuntime();
         engineAdmin = esperEngine.getEPAdministrator();
         showInput = true;
+        inputMonitor = new MonitorClient();
         
         queryCatalog = new TreeMap<Integer,QueryMetadata>(); 
         countInitializedQueries = 0;
@@ -52,6 +54,11 @@ public class EsperEngine implements IDatapointConnectivityService.DatapointListe
             if(countInitializedQueries == 0){
                 System.out.println("*** There is no initialized queries at the engine ***");
             }
+        }
+        try{
+            inputMonitor.sendInfoToMonitor(event.toString());
+        }catch (Exception e) {
+            System.out.println("Impossible to connect with Input Monitor");
         }
         engineRuntime.sendEvent(event);
     }
