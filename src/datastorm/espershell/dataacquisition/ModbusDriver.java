@@ -38,6 +38,8 @@ public class ModbusDriver
     //Atributes related with IDatapointConnectivityService methods implementation 
     private Set<DatapointListener> listeners;
     private Map<DatapointAddress, DatapointMetadata> datapoints;
+    private final String __MODBUS_CONFIG_FILE_NAME__ = "modbusDriverConf.json";
+    //private final String __MODBUS_CONFIG_FILE_NAME__ = "../modbusDriverConf.json"; 
     private ConfigFile configFile;
 
     PollerReaderThread pollerThread;
@@ -49,7 +51,7 @@ public class ModbusDriver
         configModbusMaster("127.0.0.1", 1, 3);
 
         configFile = new ConfigFile();
-        configFile.readConfigFile("modbusDriver.config");
+        configFile.readConfigFile(__MODBUS_CONFIG_FILE_NAME__);
 
         metersReadyToBeReaded = new LinkedBlockingQueue<String>();
 
@@ -80,7 +82,7 @@ public class ModbusDriver
         
         //build new structures
         configFile = new ConfigFile();
-        configFile.readConfigFile("modbusDriver.config");
+        configFile.readConfigFile(__MODBUS_CONFIG_FILE_NAME__);
         metersReadyToBeReaded = new LinkedBlockingQueue<String>();
         datapoints = configFile.getModbusDriverSettings();
         poller = new Poller();
@@ -111,7 +113,7 @@ public class ModbusDriver
           //TODO codigo correcto
           try { 
               short[] res = master.readInputRegisters(slaveId, modbusOffsetRegisters, modbusLengthRegisters);
-              System.out.println("ArraySize:"+res.length+" ={"+res[0]+","+res[1]+","+res[2]+"}");
+              //System.out.println("ArraySize:"+res.length+" ={"+res[0]+","+res[1]+","+res[2]+"}"); //DEBUG
               
               return res; 
           } catch (ModbusResponseException e)  {

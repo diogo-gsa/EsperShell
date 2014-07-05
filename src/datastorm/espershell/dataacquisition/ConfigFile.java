@@ -56,7 +56,7 @@ public class ConfigFile {
         StringBuilder sb = new StringBuilder();
  
         try {
-            // System.out.println("[DEBUG]Looking for file here: "+ System.getProperty("user.dir")); //TODO DEBUG 
+//            System.out.println("[DEBUG]Looking for file here: "+ System.getProperty("user.dir")); //TODO DEBUG 
             br = new BufferedReader(new FileReader(filename));
             String line = br.readLine();
             while (line != null) {
@@ -67,6 +67,7 @@ public class ConfigFile {
             configString = sb.toString();
         } catch (IOException e) {
             System.out.println("The system cannot find the config file: " + filename);
+            System.out.println("Looking for file here: "+ System.getProperty("user.dir"));
             //e.printStackTrace();
         } finally {
             try {
