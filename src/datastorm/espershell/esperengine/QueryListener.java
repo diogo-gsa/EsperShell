@@ -15,6 +15,8 @@ public class QueryListener
         implements UpdateListener {
 
     private QueryMetadata qMD;
+    private final int __OUTPUT_MONITOR_SERVER_PORT__ = 62491;
+    private MonitorClient outputMonitor = new MonitorClient(__OUTPUT_MONITOR_SERVER_PORT__);
     
     
     public QueryListener(QueryMetadata metadata) {
@@ -26,6 +28,7 @@ public class QueryListener
     @Override
     public void update(EventBean[] newEvents, EventBean[] oldEvents) {
         if (newEvents != null) {
+            printToOutputMonitor(newEvents,"NEW");
             if(qMD.getPrintToTerminal()){
                 printOutputToTerminal(newEvents, "NEW");
             }
@@ -34,6 +37,7 @@ public class QueryListener
             }
         }
         if (oldEvents != null) {
+            printToOutputMonitor(oldEvents,"OLD");
             if(qMD.getPrintToTerminal()){
                 printOutputToTerminal(newEvents, "OLD");
             }
@@ -42,6 +46,21 @@ public class QueryListener
             }
         }
     }
+    
+    private void printToOutputMonitor(EventBean[] events, String typeOfEvent){
+        String res = "";
+        res += "Query " + qMD.getQueryID() + " OUTPUT " + typeOfEvent + " Events:";
+        for (EventBean eb : events) {
+            res += "\n| " + eb.getUnderlying() + "\n";
+        }
+        
+        try {
+            outputMonitor.sendInfoToMonitor(res);
+        } catch (IOException e) {
+            System.out.println("Impossible to connect to 'Output datastream monitor'");
+        }
+    }   
+    
 
     private void printOutputToTerminal(EventBean[] events, String typeOfEvent) {
         try {

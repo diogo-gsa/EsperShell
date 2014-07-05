@@ -33,15 +33,17 @@ public class EsperEngine implements IDatapointConnectivityService.DatapointListe
     Map<Integer,QueryMetadata> queryCatalog; 
     int countInitializedQueries;
     private boolean showInput;
-    MonitorClient inputMonitor;
+    private final int __INPUT_MONITOR_SERVER_PORT__  = 62490;
+    private MonitorClient inputMonitor  = new MonitorClient(__INPUT_MONITOR_SERVER_PORT__);
     
+     
     
     public EsperEngine(){
         esperEngine = EPServiceProviderManager.getDefaultProvider();
         engineRuntime = esperEngine.getEPRuntime();
         engineAdmin = esperEngine.getEPAdministrator();
         showInput = true;
-        inputMonitor = new MonitorClient();
+        
         
         queryCatalog = new TreeMap<Integer,QueryMetadata>(); 
         countInitializedQueries = 0;
@@ -58,7 +60,7 @@ public class EsperEngine implements IDatapointConnectivityService.DatapointListe
         try{
             inputMonitor.sendInfoToMonitor(event.toString());
         }catch (Exception e) {
-            System.out.println("Impossible to connect with Input Monitor");
+            System.out.println("Impossible to connect to 'Input datastream monitor'");
         }
         engineRuntime.sendEvent(event);
     }
