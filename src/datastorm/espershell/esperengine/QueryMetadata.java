@@ -21,7 +21,7 @@ public class QueryMetadata {
         this.queryID = queryID;
         this.queryExpression = queryStatement;
         this.queryEngineObject = queryEngineObject;
-        this.printToTerminal = true; //default behavior 
+        this.printToTerminal = false; //default behavior 
         this.printToFile = false;    //default behavior
         this.outputFilename = queryID +"_output.txt";
     }

@@ -42,8 +42,7 @@ public class EsperEngine implements IDatapointConnectivityService.DatapointListe
         esperEngine = EPServiceProviderManager.getDefaultProvider();
         engineRuntime = esperEngine.getEPRuntime();
         engineAdmin = esperEngine.getEPAdministrator();
-        showInput = true;
-        
+        showInput = false; // DEFAULT VALUE
         
         queryCatalog = new TreeMap<Integer,QueryMetadata>(); 
         countInitializedQueries = 0;
