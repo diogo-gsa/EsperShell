@@ -23,7 +23,8 @@ public class QueryMetadata {
         this.queryEngineObject = queryEngineObject;
         this.printToTerminal = false; //default behavior 
         this.printToFile = false;    //default behavior
-        this.outputFilename = queryID +"_output.txt";
+        //escrever resultado na folder: queriesOutput
+        this.outputFilename = "../queriesOutput/"+queryID +"_output.txt";
     }
 
     

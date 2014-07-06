@@ -76,7 +76,7 @@ public class QueryListener
     
     
     private void printOutputToFile(EventBean[] events, String typeOfEvent) {
-        String res="\n";
+        String res="";
         try {
             res += "Query " + qMD.getQueryID() + " OUTPUT " + typeOfEvent + " Events:";
             for (EventBean eb : events) {
