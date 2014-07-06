@@ -22,7 +22,7 @@ public class QueryMetadata {
         this.queryExpression = queryStatement;
         this.queryEngineObject = queryEngineObject;
         this.printToTerminal = false; //default behavior 
-        this.printToFile = false;    //default behavior
+        this.printToFile = true;    //default behavior
         //escrever resultado na folder: queriesOutput
         this.outputFilename = "../queriesOutput/"+queryID +"_output.txt";
     }

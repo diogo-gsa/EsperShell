@@ -50,7 +50,6 @@ public class ConfigFile {
     
 
     public void readConfigFile(String filename) {
-        //String filename = "src/httpServer/index.html";
         BufferedReader br = null;
         String configString = null;
         StringBuilder sb = new StringBuilder();

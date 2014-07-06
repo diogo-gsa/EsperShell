@@ -2,6 +2,8 @@ package datastorm.espershell;
 import ist.smartoffice.datapointconnectivity.IDatapointConnectivityService;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -21,7 +23,6 @@ import datastorm.espershell.esperengine.QueryMetadata;
 //TODO bugs to solve:
 //TODO shell aceita (e não devia) query correcta + \n + lixo 
 //-----------------------------------
-
 
 
 public class App {
@@ -116,7 +117,7 @@ public class App {
                     reloadConfig_commandHandler(modbusDriver);
                     break;
                 case "runScript": //list installed queries and their state (des/activated)
-                    runScript_commandHandler(tokens, command, esper, modbusDriver);
+                    runScript_commandHandler(tokens, esper, modbusDriver);
                     break;
                     
                 default:
@@ -301,9 +302,45 @@ public class App {
         System.out.println("----------------------------------------------\n");        
     }
 
-    private static void runScript_commandHandler(String[] tokens, String command, EsperEngine esper, IDatapointConnectivityService modbusDriver){
-        
-        System.out.println("Not yet implemented: "+tokens[1]);
+    private static void runScript_commandHandler(String[] tokens, EsperEngine esper, IDatapointConnectivityService modbusDriver){        
+       String scriptFilename = tokens[1].replace(";", "");
+       String script = getScriptFile(scriptFilename);
+       if(script == null){
+           System.out.println("Error: Malformed script file, "+scriptFilename);
+           return;
+       }
+//       System.out.println(script); //DEBUG
+       script = script.replaceAll("[\\t\\n\\r]+", " ");
+       String[] commands = script.split(";");; //comandos sem ; no fim
+       for(String command : commands){
+           if(command.length()> 1){
+               command = command.replaceFirst("^ *", "");//remove all empty spaces before keyword (e.g '   list;' -> 'list;'
+               //System.out.println("dispatching command<"+command+">size: "+commands.length); //DEBUG
+               dispatchCommand(command, esper, modbusDriver);
+           }
+       }
     }
     
+    
+    private static String getScriptFile(String scriptFilename){
+       BufferedReader br = null;
+       String scriptString = null;
+       StringBuilder sb = new StringBuilder();
+       try {
+//           System.out.println("[DEBUG]Looking for file here: "+ System.getProperty("user.dir")); //TODO DEBUG 
+           br = new BufferedReader(new FileReader("../scripts/"+scriptFilename));
+           String line = br.readLine();
+           while (line != null) {
+               sb.append(line);
+               sb.append(System.lineSeparator());
+               line = br.readLine();
+           }
+           scriptString = sb.toString();
+       } catch (IOException e) {
+           System.out.println("System cannot find the script file '"+scriptFilename+"', do you forgot file extension(.txt) ?");
+           
+           return null;
+       } 
+       return scriptString;
+    }
 }
