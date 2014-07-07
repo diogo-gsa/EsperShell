@@ -15,6 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.xml.crypto.Data;
 
+import modbus.master.ModbusDataType;
 import modbus.master.ModbusMasterLib;
 import modbus.master.exception.ModbusCommunicationException;
 import modbus.master.exception.ModbusConnectionException;
@@ -99,7 +100,8 @@ public class ModbusDriver
         try {
             this.modbusOffsetRegisters = offset;
             this.modbusLengthRegisters = length;
-            master.createModbusTcpMaster(address);
+//            master.createModbusTcpMaster(address,true);
+              master.createModbusTcpMaster(address, 1502, true);
         } catch (ModbusConnectionException e) {
             System.out.println("Error connecting with modbus slave in the address " + address);
             e.printStackTrace();
@@ -108,27 +110,19 @@ public class ModbusDriver
 
 
 
-    private short[] readEnergyMeter(int slaveId) {
-        
-          //TODO codigo correcto
-          try { 
-              short[] res = master.readInputRegisters(slaveId, modbusOffsetRegisters, modbusLengthRegisters);
-              //System.out.println("ArraySize:"+res.length+" ={"+res[0]+","+res[1]+","+res[2]+"}"); //DEBUG
-              
-              return res; 
-          } catch (ModbusResponseException e)  {
-              System.out.println("Error: Communication between modbus master and slave failed"); 
-              return null; 
-          } catch (ModbusCommunicationException e) {
-              System.out.println("Error: Communication between modbus master and slave failed"); 
-              return null; 
-          }
-         
-
-        //TODO codigo de teste "stub"
-        //        System.out.println("ReadedSlaveID: "+slaveId);
-//        short[] res = { (short) (1 + slaveId), (short) (2 + slaveId), (short) (3 + slaveId) };
-//        return res;
+    private float[] readEnergyMeter(int slaveId) {
+        try { 
+             long phase1 =  master.readInputRegister(slaveId, 1, ModbusDataType.LONG).longValue();
+             long phase2 =  master.readInputRegister(slaveId, 5, ModbusDataType.LONG).longValue();
+             long phase3 =  master.readInputRegister(slaveId, 9, ModbusDataType.LONG).longValue();
+//             System.out.println("1:"+phase1/1000f+" 2:"+phase2/1000f+" 3:"+phase3/1000f+" teste:"+999/1000f);
+             float[] res = {phase1/1000f, phase2/1000f, phase3/1000f};
+             return res; 
+        } catch (ModbusResponseException | ModbusCommunicationException e)  {
+//          Exception must be catch silently due de database access delay
+//          System.out.println("Error: Communication between modbus master and slave failed"); 
+            return null; 
+        }
     }
 
     private class ReadModbusmasterThread extends
@@ -162,12 +156,14 @@ public class ModbusDriver
                             }
                         }
                         String meterReadingAddr = dpToReadMD.getReadDatapointAddress();
-                        short[] results = readEnergyMeter(Integer.parseInt(meterReadingAddr));
-                        DatapointValue[] resultsToSend = new DatapointValue[results.length];
-                        for (int i = 0; i < resultsToSend.length; i++) {
-                            resultsToSend[i] = new DatapointValue(results[i] + "", 0); //TODO FIX nao vai existir timestamp 
+                        float[] results = readEnergyMeter(Integer.parseInt(meterReadingAddr));
+                        if(results!=null){
+                           DatapointValue[] resultsToSend = new DatapointValue[results.length];
+                           for (int i = 0; i < resultsToSend.length; i++) {
+                               resultsToSend[i] = new DatapointValue(results[i]+"", 0); //there is no timestamp 
+                           }
+                           notifyDatapointUpdate(dpToReadAddr, resultsToSend);
                         }
-                        notifyDatapointUpdate(dpToReadAddr, resultsToSend);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

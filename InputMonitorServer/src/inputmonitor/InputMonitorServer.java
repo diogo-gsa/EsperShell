@@ -32,7 +32,7 @@ public class InputMonitorServer {
     private void handleClientRequest(Socket clientSocket) {
         try {
             ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
-            String message = (String) ois.readObject();
+            String message = (String) ois.readObject();          
             System.out.println("input > " + message);
             ois.close();
             clientSocket.close();
