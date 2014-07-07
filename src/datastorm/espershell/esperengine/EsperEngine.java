@@ -42,7 +42,7 @@ public class EsperEngine implements IDatapointConnectivityService.DatapointListe
         esperEngine = EPServiceProviderManager.getDefaultProvider();
         engineRuntime = esperEngine.getEPRuntime();
         engineAdmin = esperEngine.getEPAdministrator();
-        showInput = false; // DEFAULT VALUE
+        showInput = true; // DEFAULT VALUE
         
         queryCatalog = new TreeMap<Integer,QueryMetadata>(); 
         countInitializedQueries = 0;
@@ -50,17 +50,21 @@ public class EsperEngine implements IDatapointConnectivityService.DatapointListe
     }
        
     public void push(Measure event){        
-        if(showInput){
-            System.out.println("Input:\t"+event);
-            if(countInitializedQueries == 0){
-                System.out.println("*** There is no initialized queries at the engine ***");
-            }
-        }
+//        if(showInput){
+//            System.out.println("Input:\t"+event);
+//            if(countInitializedQueries == 0){
+//                System.out.println("*** There is no initialized queries at the engine ***");
+//            }
+//        }
+        
         try{
-            inputMonitor.sendInfoToMonitor(event.toString());
+            if(showInput){
+                inputMonitor.sendInfoToMonitor(event.toString());
+            }
         }catch (Exception e) {
             System.out.println("Impossible to connect to 'Input datastream monitor'");
         }
+       
         engineRuntime.sendEvent(event);
     }
     

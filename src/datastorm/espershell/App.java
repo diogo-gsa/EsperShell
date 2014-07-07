@@ -292,8 +292,8 @@ public class App {
         System.out.println("dropAll;\n\t Remove all the queries previously installed in Esper.");
         System.out.println("printToFile <query_id>;\n\t Set the query related with <query_id> to print its output into file queriesOutput/<query_id>output.txt");
         System.out.println("dontPrintToFile <query_id>;\n\t Set the query related with <query_id> to Do Not print its output into file queriesOutput/<query_id>output.txt");
-        System.out.println("printToTerminal <query_id>;\n\t Set the query related with <query_id> to print its output to this terminal.");
-        System.out.println("dontPrintToFile <query_id>;\n\t Set the query related with <query_id> to Do Not print its output to this terminal.");
+        System.out.println("printToTerminal <query_id>;\n\t Set the query related with <query_id> to print its output to terminal.");
+        System.out.println("dontPrintToTerminal <query_id>;\n\t Set the query related with <query_id> to Do Not print its output to terminal.");
         System.out.println("showInput;\n\t Display in terminal all events being sent by the sensors.");
         System.out.println("dontShowInput;\n\t Do not display in terminal events being sent by the sensors.");
         System.out.println("runScript <script_filename.txt>;\n\t Run script file named scripts/<script_filename>.txt");

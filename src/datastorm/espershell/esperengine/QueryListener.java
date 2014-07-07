@@ -28,18 +28,18 @@ public class QueryListener
     @Override
     public void update(EventBean[] newEvents, EventBean[] oldEvents) {
         if (newEvents != null) {
-            printToOutputMonitor(newEvents,"NEW");
             if(qMD.getPrintToTerminal()){
-                printOutputToTerminal(newEvents, "NEW");
+                printToOutputMonitor(newEvents,"NEW");
+                //printOutputToTerminal(newEvents, "NEW");
             }
             if(qMD.getPrintToFile()){
                 printOutputToFile(newEvents, "NEW");
             }
         }
         if (oldEvents != null) {
-            printToOutputMonitor(oldEvents,"OLD");
             if(qMD.getPrintToTerminal()){
-                printOutputToTerminal(newEvents, "OLD");
+                printToOutputMonitor(oldEvents,"OLD");
+                //printOutputToTerminal(newEvents, "OLD");
             }
             if(qMD.getPrintToFile()){
                 printOutputToFile(newEvents, "OLD");
@@ -60,20 +60,18 @@ public class QueryListener
             System.out.println("Impossible to connect to 'Output datastream monitor'");
         }
     }   
-    
 
-    private void printOutputToTerminal(EventBean[] events, String typeOfEvent) {
-        try {
-            System.out.print("Query " + qMD.getQueryID() + " OUTPUT " + typeOfEvent + " Events:");
-            for (EventBean eb : events) {
-                System.out.print("\n| " + eb.getUnderlying() + "\n");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    private void printOutputToTerminal(EventBean[] events, String typeOfEvent) {
+//        try {
+//            System.out.print("Query " + qMD.getQueryID() + " OUTPUT " + typeOfEvent + " Events:");
+//            for (EventBean eb : events) {
+//                System.out.print("\n| " + eb.getUnderlying() + "\n");
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-    
     
     private void printOutputToFile(EventBean[] events, String typeOfEvent) {
         String res="";
