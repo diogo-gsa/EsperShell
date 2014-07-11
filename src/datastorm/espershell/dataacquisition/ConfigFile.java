@@ -90,7 +90,7 @@ public class ConfigFile {
                 try {
                     String modbusAddr = (String) obj.get("modbusAddr");
                     String meterId = (String) obj.get("meterId");
-                    String poolingTime = (String) obj.get("PollingTime(microsec.)");
+                    String poolingTime = (String) obj.get("PollingTimeMillis");
                     ConfigEntry entry = new ConfigEntry(Integer.parseInt(modbusAddr), meterId,
                             Long.parseLong(poolingTime));
                     configEntriesMap.put(entry.getMeterId(), entry);
