@@ -47,9 +47,9 @@ public class App {
                 line = br.readLine();
                 command = command + line;
                 if (command.contains(";")) {
-                    if (command.equals("exit;")) {
-                        return;
-                    }
+//                    if (command.equals("exit;")) {
+//                        return; //There is no exit command
+//                    }
                     dispatchCommand(command, esper, modbusDriver);
                     line = "";
                     command = "";
@@ -73,50 +73,50 @@ public class App {
                 case "install": // install queries
                     install_CommandHandler(tokens, esper);
                     break; 
-                case "send": // send events into engine
-                    send_CommandHandler(tokens, esper);
+                case "push": // send events into engine
+                    push_CommandHandler(tokens, esper);
                     break; 
                 case "list": //list installed queries and their state (des/activated)
                     list_commandHandler(esper);
                     break;
-                case "turnOn": //activate queries
+                case "enable": //activate queries
                     //turnOn -5; => ['turnOn', '-5;'] if using "\\s+", ['turnOn', '5;'] if using "\\W+"
-                    turnON_commandHandler(esper,command.split("\\s+", 2)); 
+                    enable_commandHandler(esper,command.split("\\s+", 2)); 
                     break;
-                case "turnOff": //desactivate queries
-                    turnOFF_commandHandler(esper,command.split("\\s+", 2));
+                case "disable": //desactivate queries
+                    disable_commandHandler(esper,command.split("\\s+", 2));
                     break;
                 case "drop" :
                     drop_commandHandler(esper,command.split("\\s+", 2));
                     break;
-                case "dropAll" :
-                    dropAll_commandHandler(esper);
+                case "dropall" :
+                    dropall_commandHandler(esper);
                     break;
-                case "printToFile" :
-                    printToFile_commandHandler(esper,command.split("\\s+", 2));
+                case "enableoutputfile" :
+                    enableOutputFile_commandHandler(esper,command.split("\\s+", 2));
                     break;
-                case "dontPrintToFile" :
-                    dontPrintToFile_commandHandler(esper,command.split("\\s+", 2));
+                case "disableoutputfile" :
+                    disableOutputFile_commandHandler(esper,command.split("\\s+", 2));
                     break;
-                case "printToTerminal" :
-                    printToTerminal_commandHandler(esper,command.split("\\s+", 2));
+                case "enableoutputterminal" :
+                    enableOtputTerminal_commandHandler(esper,command.split("\\s+", 2));
                     break;
-                case "dontPrintToTerminal" :
-                    dontPrintToTerminal_commandHandler(esper,command.split("\\s+", 2));
+                case "disableoutputterminal" :
+                    disableOtputTerminal_commandHandler(esper,command.split("\\s+", 2));
                     break;
                 case "help": //all available commands
                     help_commandHandler();
                     break;
-                case "showInput": //list installed queries and their state (des/activated)
-                    showInput_commandHandler(esper);
+                case "enableinputterminal": //list installed queries and their state (des/activated)
+                    enableInputTerminal_commandHandler(esper);
                     break;
-                case "dontShowInput": //list installed queries and their state (des/activated)
-                    dontShowInput_commandHandler(esper);
+                case "disableinputterminal": //list installed queries and their state (des/activated)
+                    disableInputTerminal_commandHandler(esper);
                     break;    
-                case "reloadConfig": //list installed queries and their state (des/activated)
+                case "reload": //list installed queries and their state (des/activated)
                     reloadConfig_commandHandler(modbusDriver);
                     break;
-                case "runScript": //list installed queries and their state (des/activated)
+                case "run": //list installed queries and their state (des/activated)
                     runScript_commandHandler(tokens, esper, modbusDriver);
                     break;
                     
@@ -146,7 +146,7 @@ public class App {
     }
 
     // syntax: send (deviceId, measure, timestamp);
-    private static void send_CommandHandler(String[] tokens, EsperEngine esper) {
+    private static void push_CommandHandler(String[] tokens, EsperEngine esper) {
         // send (lib, 17, 234); => ['send','(lib, 17, 234)']                        
         String event = tokens[1]; //event: (lib, 17, 234)
         event = (event.replace("(", "")).replace(")", "").replaceAll("\\s+|;", ""); //Remove white spaces = lib,17,234
@@ -172,7 +172,7 @@ public class App {
     }
 
     
-    private static void dontPrintToTerminal_commandHandler(EsperEngine esper, String[] tokens) {
+    private static void disableOtputTerminal_commandHandler(EsperEngine esper, String[] tokens) {
         try {
             int queryID = Integer.parseInt(tokens[1].replace(";", ""));
             if(esper.dontPrintToTerminal(queryID)){
@@ -184,7 +184,7 @@ public class App {
         
     }
 
-    private static void printToTerminal_commandHandler(EsperEngine esper, String[] tokens) {
+    private static void enableOtputTerminal_commandHandler(EsperEngine esper, String[] tokens) {
         try {
             int queryID = Integer.parseInt(tokens[1].replace(";", ""));
             if(esper.printToTerminal(queryID)){
@@ -195,7 +195,7 @@ public class App {
         }
     }
 
-    private static void dontPrintToFile_commandHandler(EsperEngine esper, String[] tokens) {
+    private static void disableOutputFile_commandHandler(EsperEngine esper, String[] tokens) {
         try {
             int queryID = Integer.parseInt(tokens[1].replace(";", ""));
             if(esper.dontPrintToFile(queryID)){
@@ -206,7 +206,7 @@ public class App {
         }
     }
 
-    private static void printToFile_commandHandler(EsperEngine esper, String[] tokens) {
+    private static void enableOutputFile_commandHandler(EsperEngine esper, String[] tokens) {
         try {
             int queryID = Integer.parseInt(tokens[1].replace(";", ""));
             if(esper.printToFile(queryID)){
@@ -218,7 +218,7 @@ public class App {
     }
     
     
-    private static void turnON_commandHandler(EsperEngine esper, String[] tokens) {
+    private static void enable_commandHandler(EsperEngine esper, String[] tokens) {
         try {
             int queryID = Integer.parseInt(tokens[1].replace(";", ""));
             if(esper.turnOnQuery(queryID)){
@@ -229,7 +229,7 @@ public class App {
         }
     }
 
-    private static void turnOFF_commandHandler(EsperEngine esper, String[] tokens) {
+    private static void disable_commandHandler(EsperEngine esper, String[] tokens) {
         try {
             int queryID = Integer.parseInt(tokens[1].replace(";", ""));
             if(esper.turnOffQuery(queryID)){
@@ -251,17 +251,17 @@ public class App {
         }
     }
     
-    private static void dropAll_commandHandler(EsperEngine esper) {
+    private static void dropall_commandHandler(EsperEngine esper) {
         int countDroppedQueries = esper.dropAllQueries();
         System.out.println("\n"+countDroppedQueries+" queries were dropped.\n");
     }
     
-    private static void showInput_commandHandler(EsperEngine esper) {
+    private static void enableInputTerminal_commandHandler(EsperEngine esper) {
         esper.setShowInput(true);        
         System.out.println("\n Arriving events will be printed in terminal.\n");
     }
     
-    private static void dontShowInput_commandHandler(EsperEngine esper) {
+    private static void disableInputTerminal_commandHandler(EsperEngine esper) {
         esper.setShowInput(false);
         System.out.println("\n Arriving events will Not be printed in terminal.\n");        
     }
@@ -283,22 +283,39 @@ public class App {
     
     private static void help_commandHandler(){
         System.out.println("------------- Available commands -------------");
-        System.out.println("install <query_statement>;\n\tInstall the query stated by <query_statement> in Esper, associating it with an Id.");
-        System.out.println("send (meterId,measure);\n\tSend the event (deviceId,measure) into Esper query engine.");
-        System.out.println("list;\n\t List the queries installed in Esper.");
-        System.out.println("turnOn <query_id>;\n\t Turn ON the query associated with the id <query_id>.");
-        System.out.println("turnOff <query_id>;\n\t Turn OFF the query associated with the id <query_id>.");
-        System.out.println("drop <query_id>;\n\t Remove from Esper the query associated with the id <query_id>.");
-        System.out.println("dropAll;\n\t Remove all the queries previously installed in Esper.");
-        System.out.println("printToFile <query_id>;\n\t Set the query related with <query_id> to print its output into file queriesOutput/<query_id>output.txt");
-        System.out.println("dontPrintToFile <query_id>;\n\t Set the query related with <query_id> to Do Not print its output into file queriesOutput/<query_id>output.txt");
-        System.out.println("printToTerminal <query_id>;\n\t Set the query related with <query_id> to print its output to terminal.");
-        System.out.println("dontPrintToTerminal <query_id>;\n\t Set the query related with <query_id> to Do Not print its output to terminal.");
-        System.out.println("showInput;\n\t Display in terminal all events being sent by the sensors.");
-        System.out.println("dontShowInput;\n\t Do not display in terminal events being sent by the sensors.");
-        System.out.println("runScript <script_filename.txt>;\n\t Run script file named scripts/<script_filename>.txt");
-        System.out.println("reloadConfig;\n\t Reload configuration file modbusDriverConf.json");
-        System.out.println("exit;\n\t End the program.");
+        
+        System.out.println("install <query_statement>;\n\t Install the query stated by <query_statement> in Esper, \n\t associating it with an Id.\n");
+        
+        System.out.println("push (meterId,measure);\n\t Push the event (deviceId,measure) into Esper query engine.\n");
+        
+        System.out.println("list;\n\t List the queries installed in Esper.\n");
+        
+        System.out.println("enable <query_id>;\n\t Enable the query associated with the id <query_id>.\n");
+        
+        System.out.println("disable <query_id>;\n\t Disable the query associated with the id <query_id>.\n");
+        
+        System.out.println("drop <query_id>;\n\t Remove from Esper the query associated with the id <query_id>.\n");
+        
+        System.out.println("dropall;\n\t Remove all the queries previously installed in Esper.\n");
+        
+        System.out.println("enableoutputfile <query_id>;\n\t Set the query related with <query_id> to print its output \n\t into file queriesOutput/<query_id>output.txt\n");
+        
+        System.out.println("disableoutputfile <query_id>;\n\t Set the query related with <query_id> to Do Not print its \n\t output into file queriesOutput/<query_id>output.txt\n");
+        
+        System.out.println("enableoutputterminal <query_id>;\n\t Set the query related with <query_id> to print its output \n\t to terminal.\n");
+        
+        System.out.println("disableoutputterminal <query_id>;\n\t Set the query related with <query_id> to Do Not print its output \n\t to terminal.\n");
+        
+        System.out.println("enableinputterminal;\n\t Display in terminal all events being sent by the sensors.\n");
+        
+        System.out.println("disableinputterminal;\n\t Do not display in terminal events being sent by the sensors.\n");
+        
+        System.out.println("run <script_filename.txt>;\n\t Run script file named scripts/<script_filename>.txt\n");
+        
+        System.out.println("reload;\n\t Reload configuration file modbusDriverConf.json\n");
+        
+//        System.out.println("exit;\n\t End the program."); //there is no exit command
+        
         System.out.println("----------------------------------------------\n");
     }
 
