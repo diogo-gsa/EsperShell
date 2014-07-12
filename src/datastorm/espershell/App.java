@@ -58,8 +58,11 @@ public class App {
                     command = command + "\n";
                 }
 
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                System.out.println("Malformed command");
+                line = "";
+                command = "";
+                System.out.print(">");
             }
         }
     }
