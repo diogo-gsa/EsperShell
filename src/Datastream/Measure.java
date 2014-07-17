@@ -10,12 +10,10 @@ public class Measure{
 
     private String meterId; 
     private double measure;
-//  private long timestamp; 
     
     public Measure(String id,/* long ts,*/ double measure) {
         this.meterId = id;
         this.measure = measure;        
-//      this.timestamp = ts;
     }
     
     public double getMeasure() {
@@ -26,12 +24,8 @@ public class Measure{
         return meterId;
     }
 
-//    public long getTimestamp() {   
-//        return timestamp;
-//    }
-    
     public String toString(){        
-        return "[meterId: "+meterId/*" | timestamp:"+timestamp+ "*/+" | measure: "+measure+"]";
+        return "[meterId: "+meterId+" | measure: "+measure+"]";
     }
 
 }

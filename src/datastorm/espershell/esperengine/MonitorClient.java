@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+/*
+ * @author Diogo Anjos (diogo.silva.anjos@tecnico.ulisboa.pt)
+ * 
+ */
 
 public class MonitorClient {
 

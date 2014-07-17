@@ -94,7 +94,7 @@ public class ConfigFile {
                     ConfigEntry entry = new ConfigEntry(Integer.parseInt(modbusAddr), meterId,
                             Long.parseLong(poolingTime));
                     configEntriesMap.put(entry.getMeterId(), entry);
-                    //                    System.out.println("[modbyusAddr: "+modbusAddr+" meterId: "+meterId+" poolingTime: "+poolingTime+"]"); // DEBUG
+                    // System.out.println("[modbyusAddr: "+modbusAddr+" meterId: "+meterId+" poolingTime: "+poolingTime+"]"); // DEBUG
                 } catch (Exception e) {
                     continue;
                 }
